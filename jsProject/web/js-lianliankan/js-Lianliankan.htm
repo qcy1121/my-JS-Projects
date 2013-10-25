@@ -1,0 +1,381 @@
+﻿<html>
+<head>
+<title>在线连连看 - Javascript小游戏 - 中国asp之家</title>
+<style>
+.select{filter:Gray}
+#lineDiv{height:20px}
+.lineDot{position:absolute; background:#f60;padding:0;font-size:0;width:10px;height:10px}
+#gridDiv{padding:30px;background:#000;border:5px solid #FFF4FF}
+#gridTalbe{background-repeat:no-repeat; background-position:center; margin:0}
+#gridTalbe td{width:41px;height:50px;}
+#gridTalbe img{width:40px; border-right:1px solid #666;}
+body{ padding:0; margin:0;}
+td{font-size:13px;line-height:20px}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="连连看,在线小游戏，Javascript连连看">
+<meta name="description" content="Javascript在线连连看小游戏，连连看源代码">
+<script type="text/javascript" src='../lib/jquery.js'></script>
+</head>
+<body>
+<table width="100%" border="1" cellspacing="1">
+<tr>
+    <td height="58" bgcolor="#FFF4FF">
+	<p align="center"><b>在线连连看 </b><br>
+	<b>介绍</b>：连连看的玩法相信不用介绍了吧！虽然这个Javascript版的连连看功能比较少，但是好在可以无限次洗牌，呵呵！<br>程序教程：<a href="http://www.aspxhome.com/download/javascript/20081/272410.htm" target=_blank>http://www.aspxhome.com/download/javascript/20081/272410.htm</a> <p align=center><input name="button" type="button" onClick="oGrid.shuffle()" value=" 洗 牌 "> <input name="button" type="button" onClick="window.close()" value=" 关 闭 "></p></td>
+  </tr>
+  <tr>
+    <td bgcolor="#FFF4FF"><div id="gridDiv"></div>
+	</td>
+  </tr>
+	
+</table>
+<div id="lineDiv"></div>
+<div id="debug"></div>
+<script>
+
+/************************************************************************
+设计：tot
+时间：2007-12-29
+MSN：xiaotot@msn.com
+************************************************************************/
+//记录被选择图块的信息
+var selectImg = "";
+var selectX = 0;
+var selectY = 0;
+//图块宽度和高度，用来计算画线的位置
+var stepX = 41;
+var stepY = 50;
+
+//初始化棋盘,只能以oGrid命名
+var oGrid = new objGrid(16,8);
+
+/*****************************功能函数*******************************************/
+//数组元素随机排序,tot设计，修改请保留
+function rndArray(arr){
+	var le = arr.length;
+		for(var i=0; i < le; i++){
+			var s = Math.floor(Math.random()*le);
+			var zx = arr[i].x;
+			var zy = arr[i].y;//这里不能写成z=arr[i],因为object是引用
+			arr[i].x = arr[s].x;
+			arr[i].y = arr[s].y;
+			arr[s].x = zx;
+			arr[s].y = zy;
+		}
+}
+//数组元素随机排序
+function ArrayRnd(arr,times){
+	for(i = 0; i < times; i++)rndArray(arr)
+}
+
+//获取Html元素的绝对位置
+function GetAbsoluteLocation(element){
+	if ( arguments.length != 1 || element == null ) return null;
+
+	var offsetTop = element.offsetTop;
+	var offsetLeft = element.offsetLeft;
+	var offsetWidth = element.offsetWidth;
+	var offsetHeight = element.offsetHeight;
+	while( element = element.offsetParent ) { 
+		offsetTop += element.offsetTop; 
+		offsetLeft += element.offsetLeft; 
+	} 
+	return { 
+		absoluteTop: offsetTop,
+		absoluteLeft: offsetLeft,
+		offsetWidth: offsetWidth,
+		offsetHeight: offsetHeight
+	}; 
+}
+/*****************************封装对象*******************************************/
+//方盘对象，用来放置图块，tot设计，修改请保留
+function objGrid(width,height){
+	var imgNum = 32; //图块样式个数
+	var gridNum = width * height;
+	//初始化图块所用的图片名
+	var arrImg = new Array(imgNum);
+	for(i = 0;i < imgNum; i++) arrImg[i] = "llk_" + i;
+	//初始化图块数组
+	var arrImgBlock = new Array(gridNum);
+	for(i = 0; i< gridNum; i++){
+		arrImgBlock[i] = new objImgBlock(arrImg[Math.floor(i /4)]);
+		arrImgBlock[i].x = Math.floor(i / height);
+		arrImgBlock[i].y = i % height;
+	}
+	//打乱次序
+	ArrayRnd(arrImgBlock,5);
+	//生成方盘对象
+	var obj = new Object();
+	obj.backGround = "back.gif";//方盘的背景图片
+	obj.arrGrid = new Array(width);
+	//初始化方盘二维数组
+	for(i = 0; i < width; i++)
+		obj.arrGrid[i] = new Array(height);
+	//向放盘中放置图块
+	obj.init = function (arrBlock){
+		for(i = 0; i < width; i++)
+			for(j = 0; j < height; j++){
+				this.arrGrid[i][j] = "";
+			}
+		grid = arrBlock.length;
+		for(i = 0; i < grid; i++)
+				this.arrGrid[arrBlock[i].x][arrBlock[i].y] = arrBlock[i];
+		this.drawGrid()
+		this.setGridBackground(this.backGround)
+	}
+	//洗牌
+	obj.shuffle = function (){
+		var arrIBlock = new Array();
+		for(i = 0; i < width; i++)
+			for(j = 0; j < height; j++)
+				if(this.arrGrid[i][j] != "")arrIBlock.push(this.arrGrid[i][j]);
+		ArrayRnd(arrIBlock,5);
+		this.init(arrIBlock);
+	}
+	//查找最远射点
+	obj.findRadial = function (point){
+		var minX = -1, minY = -1, maxX = width, maxY = height;
+		//水平查找最远射点
+		for(i = 0; i < width; i++){
+			if(i < point.X){
+				if(this.arrGrid[i][point.Y] != "")
+					minX = point.X;
+				else{
+					if(minX == point.X) minX = i;
+				}
+			}else if(i > point.X){
+				if(this.arrGrid[i][point.Y] != ""){
+					maxX = i - 1;
+					break;
+				}
+			}
+		}
+		//垂直查找最远射点
+		for(i = 0; i < height; i++){
+			if(i < point.Y){
+				if(this.arrGrid[point.X][i] != "")
+					minY = point.Y;
+				else{
+					if(minY == point.Y) minY = i;
+				}
+			}else if(i > point.Y){
+				if(this.arrGrid[point.X][i] != ""){
+					maxY = i - 1;
+					break;
+				}
+			}
+		}
+		return {
+			MinX : minX,
+			MinY : minY,
+			MaxX : maxX,
+			MaxY : maxY
+		}
+	}
+	//查找法线
+	obj.findNormal = function(sPoint,ePoint){
+		var	startPoint, endPoint
+		var sRadial = this.findRadial(sPoint);
+		var eRadial = this.findRadial(ePoint);
+		var pass;//是否可以通过标志
+		
+		maxSX = Math.max(sRadial.MinX,eRadial.MinX)
+		minEX = Math.min(sRadial.MaxX,eRadial.MaxX);
+		maxSY = Math.max(sRadial.MinY,eRadial.MinY);
+		minEY = Math.min(sRadial.MaxY,eRadial.MaxY)
+		//查找横法线
+		if( maxSY <= minEY){
+			if(maxSY == -1){
+				startPoint = new objPoint(sPoint.X,-1);
+				endPoint = new objPoint(ePoint.X,-1);
+			}else if(minEY == height){
+				startPoint = new objPoint(sPoint.X,height);
+				endPoint = new objPoint(ePoint.X,height);
+			}
+			else{
+				for(j = maxSY; j <= minEY; j++){
+					pass = true;
+					for(i = Math.min(sPoint.X,ePoint.X) + 1; i < Math.max(sPoint.X,ePoint.X); i++){
+						if(this.arrGrid[i][j] != "") pass = false;
+					}
+					if(pass){
+						startPoint = new objPoint(sPoint.X,j);
+						endPoint = new objPoint(ePoint.X,j);
+					}
+				}
+			}
+		}//查找竖法线
+		else if( maxSX <= minEX){
+			if(maxSX == -1){
+				startPoint = new objPoint(-1,sPoint.Y);
+				endPoint = new objPoint(-1,ePoint.Y);
+			}else if(minEX == width){
+				startPoint = new objPoint(width,sPoint.Y);
+				endPoint = new objPoint(width,ePoint.Y);
+			}
+			else{
+				for(i = maxSX; i <= minEX; i++){
+					pass = true;
+					for(j = Math.min(sPoint.Y,ePoint.Y) + 1; j < Math.max(sPoint.Y,ePoint.Y); j++){
+						if(this.arrGrid[i][j] != "") pass = false;
+					}
+					if(pass){
+						startPoint = new objPoint(i,sPoint.Y);
+						endPoint = new objPoint(i,ePoint.Y);
+					}
+				}
+			}
+		}
+		//返回法线端点
+		if(startPoint){
+			return{sP : startPoint, eP : endPoint}
+		}
+		else {return false};
+	}
+	//画方盘
+	obj.drawGrid = function (){
+		var gDiv = document.getElementById("gridDiv");
+		var tempHtml = "<table id=gridTalbe border=0 cellpadding=0 cellspacing=0 align=center>";
+		for(i = 0; i < height; i++){
+			tempHtml += "</tr>";
+			for(j = 0; j < width; j++){
+				tempHtml += "<td>";
+				if(this.arrGrid[j][i] != "") 
+					tempHtml += this.arrGrid[j][i].toHtml();
+				tempHtml += "</td>";
+			}
+			tempHtml += "</tr>";
+		}
+		tempHtml += "</table>";
+		gDiv.innerHTML = tempHtml;
+	}
+	//设置背景
+	obj.setGridBackground = function(img){
+		var gTable = document.getElementById("gridTalbe");
+		gTable.style.backgroundImage = "url(images/" + img + ")";
+		this.backGround = img;
+	}
+	//执行初始化
+	obj.init(arrImgBlock);
+	return obj;
+}
+
+//图块对象
+function objImgBlock(pic){
+	var obj = new Object();
+	obj.picName = pic;
+	obj.x = 0;
+	obj.y = 0;
+	obj.toHtml = function(){
+		return "<img name=" + this.picName + " onclick=clickImg(" + this.x + "," + this.y + ") src=images/"
+		 + this.picName + ".gif>"
+	}
+	return obj;
+}
+//坐标点对象，对应于承载图块的二元数组下标
+function objPoint(x,y){ return{ X : x, Y : y }}
+//点击图块的动作
+function clickImg(x,y){
+	eObj = event.srcElement;
+
+	if((selectImg.name == eObj.name) && (selectImg !== eObj)){
+		if(Line(new objPoint(selectX,selectY),new objPoint(x,y))){
+			selectImg.style.display = "none";
+			eObj.style.display = "none";
+			selectImg = "";
+			selectX = 0; selectY = 0;
+		}else changeSelect(eObj,x,y)
+	}else{
+		changeSelect(eObj,x,y)
+	}
+}
+//更换选择的图块
+function changeSelect(o,x,y){
+	selectImg.className = "";
+	selectImg = o;
+	selectImg.className = "select";
+	selectX = x; selectY = y;
+}
+
+//画线
+function Line(sPoint,ePoint){
+	var nLine = oGrid.findNormal(sPoint,ePoint);
+	if(nLine){
+		oGrid.arrGrid[sPoint.X][sPoint.Y] = "";
+		oGrid.arrGrid[ePoint.X][ePoint.Y] = "";
+
+		drawLine(sPoint,nLine.sP);
+		drawLine(nLine.sP,nLine.eP);
+		drawLine(ePoint,nLine.eP);
+
+		setTimeout(clearLine,500);
+		return true;
+	}else{
+		return false
+	}
+}
+
+//连接两点的画线函数
+function drawLine(sPoint,ePoint){
+	var startPoint, endPoint, lineType = true;//默认画横线
+	var lineLen;//画线长度
+	var linDiv = document.getElementById("lineDiv");
+	var O = document.getElementById("gridTalbe");
+	//原点的绝对坐标
+	var oPoint = new objPoint(GetAbsoluteLocation(O).absoluteLeft - 25, GetAbsoluteLocation(O).absoluteTop - 30);
+
+	if(sPoint.X == ePoint.X){ //画竖线
+		if(sPoint.Y > ePoint.Y){//判断起始点
+			startPoint = ePoint;
+			endPoint = sPoint;
+		}else{
+			startPoint = sPoint;
+			endPoint = ePoint;
+		}
+		lineLen = endPoint.Y - startPoint.Y + 1;
+		lineType = false;
+	}else{//画横线
+		if(sPoint.X > ePoint.X){//判断起始点
+			startPoint = ePoint;
+			endPoint = sPoint;
+		}else{
+			startPoint = sPoint;
+			endPoint = ePoint;
+		}
+		lineLen = endPoint.X - startPoint.X + 1;
+	}
+
+	for(i = 1; i <= lineLen; i++){
+
+		var $lineDot = $("<div class='lineDot'></div>");
+		var lineDot = $lineDot.get(0);
+		
+		lineDot.style.left = lineType ? (oPoint.X + stepX * (startPoint.X + i) + "px") : (oPoint.X + stepX * (startPoint.X + 1) + "px");
+		lineDot.style.top = lineType ? (oPoint.Y + stepY * (startPoint.Y + 1) + "px") : (oPoint.Y + stepY * (startPoint.Y + i) + "px");
+		linDiv.insertBefore(lineDot);
+	}
+}
+//清除画线
+function clearLine(){
+	var linDiv = document.getElementById("lineDiv");
+	linDiv.innerHTML = "";
+}
+//调试用
+function debug(str){
+	var linDiv = document.getElementById("debug");
+	linDiv.innerHTML = str + "<br>" + linDiv.innerHTML;
+}
+function odebug(obj,oname){
+	var linDiv = document.getElementById("debug");
+	for(o in obj){
+		if(typeof(obj[o]) == "object"){
+			odebug(obj[o],oname + o + ".")
+		}
+		else linDiv.innerHTML = oname + o + "=" + obj[o] + "<br>" + linDiv.innerHTML;
+	}
+}
+
+</script>
+</body>
+</html>
