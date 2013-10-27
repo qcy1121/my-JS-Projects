@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>连连看 javaScript 版</title>
+<script type="text/javascript" src ="../lib/jquery.js"></script>
+<script type="text/javascript" src ="../js/llk.js"></script>
+<link rel="stylesheet" href="../css/llk.css"/>
+<script type="text/javascript">
+var gridView;
+var draw=function(){
+	var div =$("#tableDiv");
+	gridView = new GridView(div);
+	gridView.init();
+};
+var refresh= function(){
+	gridView.refreshGrid();
+	gridView.drawGrid();
+}
+
+	
+</script>
+</head>
+<body>
+<input type="button" value = "draw " onclick="draw()" />
+<input type="button" value = "refresh " onclick="refresh()" />
+<div id="tableDiv" style="width:600px;height:400px;">
+</div>
+</body>
+</html>

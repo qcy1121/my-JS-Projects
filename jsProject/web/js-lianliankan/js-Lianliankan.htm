@@ -22,7 +22,7 @@ td{font-size:13px;line-height:20px}
 <tr>
     <td height="58" bgcolor="#FFF4FF">
 	<p align="center"><b>在线连连看 </b><br>
-	<b>介绍</b>：连连看的玩法相信不用介绍了吧！虽然这个Javascript版的连连看功能比较少，但是好在可以无限次洗牌，呵呵！<br>程序教程：<a href="http://www.aspxhome.com/download/javascript/20081/272410.htm" target=_blank>http://www.aspxhome.com/download/javascript/20081/272410.htm</a> <p align=center><input name="button" type="button" onClick="oGrid.shuffle()" value=" 洗 牌 "> <input name="button" type="button" onClick="window.close()" value=" 关 闭 "></p></td>
+	<b>介绍</b>：连连看的玩法相信不用介绍了吧！虽然这个Javascript版的连连看功能比较少，但是好在可以无限次洗牌，呵呵！ <p align=center><input name="button" type="button" onClick="oGrid.shuffle()" value=" 洗 牌 "> <input name="button" type="button" onClick="window.close()" value=" 关 闭 "></p></td>
   </tr>
   <tr>
     <td bgcolor="#FFF4FF"><div id="gridDiv"></div>
@@ -107,7 +107,7 @@ function objGrid(width,height){
 	ArrayRnd(arrImgBlock,5);
 	//生成方盘对象
 	var obj = new Object();
-	obj.backGround = "back.gif";//方盘的背景图片
+	obj.backGround = "";//方盘的背景图片
 	obj.arrGrid = new Array(width);
 	//初始化方盘二维数组
 	for(i = 0; i < width; i++)
