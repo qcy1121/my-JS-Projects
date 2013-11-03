@@ -51,9 +51,13 @@ var Cell = (function(){
 // the grid
 var GridView = (function() {
 	var GridView = function(parent,xNum, yNum,cell_size) {
-
-		this.xNum = xNum ? xNum : 10; // rows of view table
-		this.yNum = yNum ? yNum : 5; // columns of view table
+		
+		this.xNum = xNum ? xNum : 25; // rows of view table
+		this.yNum = yNum ? yNum : 20; // columns of view table
+		if(this.xNum * this.yNum %2){
+			alert(" Wrong xNumber or yNumber");
+			this.xNum = 10;
+		}
 		this.cell_size = cell_size?cell_size:40; // size of square cell.
 		this.parentElement = parent;
 	};
@@ -99,7 +103,7 @@ var GridView = (function() {
 			for(var i=0;i<this.xNum;i++){
 				this.gridCells[i] = [];
 				for(var j=0;j<this.yNum;j++){
-					if(!(j % 2))img = this.getImg();
+					if((this.cells.length % 2)==0)img = this.getRandomImg();
 					//console.log(img);
 					cell = new Cell(i,j,img);
 					cell.view = this;
@@ -120,7 +124,7 @@ var GridView = (function() {
 			imgCells.push(cell);
 			
 		},
-		getImg:function(isSort){
+		getRandomImg:function(isSort){
 			if(!isSort){
 				var randomIdx =Math.floor(Math.random()*(this.imgs.length));
 				return this.imgs[randomIdx];
@@ -247,8 +251,8 @@ var GridView = (function() {
 			// get the farthest 4 points for the two point to link.
 			var bounds1 = this.getBounds(cell1),
 				bounds2 = this.getBounds(cell2);
-			console.log(bounds1);
-			console.log(bounds2);
+			//console.log(bounds1);
+			//console.log(bounds2);
 			var yMin = bounds1.yMin.y>bounds2.yMin.y?bounds1.yMin:bounds2.yMin,
 				yMax = bounds1.yMax.y<bounds2.yMax.y?bounds1.yMax:bounds2.yMax,
 				xMin = bounds1.xMin.x>bounds2.xMin.x?bounds1.xMin:bounds2.xMin,
@@ -283,7 +287,7 @@ var GridView = (function() {
 				diff = tp2.x -tp1.x;
 				step = Math.abs(diff)/diff;
 				if(tp1.y>=this.yNum||tp1.y<0 || diff==0)return true;
-				for(var i =tp1.x+1;i!=tp2.x;i+=step){
+				for(var i =tp1.x+step;i!=tp2.x;i+=step){
 					tempCell = this.gridCells[i][tp1.y];
 					if(!tempCell.cell.isHidden)return false;
 				}
@@ -332,7 +336,7 @@ var GridView = (function() {
 			cell1.isHidden = true;
 			cell2.isHidden = true;
 			this.selectedCell = null;
-			this.hidCount -=2;
+			this.hidCount +=2;
 			//TODO , need add animation
 		},
 		selectCell:function(cell){
@@ -348,6 +352,9 @@ var GridView = (function() {
 
 			this.refreshGrid();
 			this.drawGrid();
+		},
+		tips:function(){
+			//var img = this.imgMap.
 		}
 
 	};
