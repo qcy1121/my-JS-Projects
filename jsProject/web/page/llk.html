@@ -12,6 +12,8 @@ var draw=function(){
 	var div =$("#tableDiv");
 	gridView = new GridView(div);
 	gridView.init();
+	$("#refresh").attr("disabled",false);
+	$("#refresh").removeAttr("disabled");
 };
 var refresh= function(){
 	gridView.refreshGrid();
@@ -23,7 +25,7 @@ var refresh= function(){
 </head>
 <body>
 <input type="button" value = "draw " onclick="draw()" />
-<input type="button" value = "refresh " onclick="refresh()" />
+<input type="button" id="refresh" value = "refresh "  disabled="disabled" onclick="refresh()" />
 <div id="tableDiv" style="width:600px;height:400px;">
 </div>
 </body>

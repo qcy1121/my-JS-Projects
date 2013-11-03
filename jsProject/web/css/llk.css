@@ -1,19 +1,31 @@
-	table{
-		border-collapse: collapse;
-	}
-	td{
-		border: solid #ccc 1px;
-		height: 36px;
-		width: 36px;
-		cursor: pointer;
-	}
-	td img{
-	  height: 30px;
-	  width: 30px;
-	  border: solid #fff 3px;
-	  /*
+table {
+	border-collapse: collapse;
+}
+
+td {
+	border: solid #ccc 1px;
+	height: 36px;
+	width: 36px;
+	cursor: pointer;
+}
+
+td img {
+	height: 30px;
+	width: 30px;
+	border: solid #fff 3px;
+	/*
 	  filter: alpha(opacity=80);
 	  -moz-opacity: 0.8;
 	  opacity: 0.8;
 	  */
- }
+}
+
+.selected {
+	filter: Gray;
+	border-color:red;
+}
+
+.imgCell {
+	border-radius: 8px;
+
+}

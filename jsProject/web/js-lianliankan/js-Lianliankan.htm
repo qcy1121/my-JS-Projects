@@ -253,7 +253,7 @@ function objGrid(width,height){
 	//设置背景
 	obj.setGridBackground = function(img){
 		var gTable = document.getElementById("gridTalbe");
-		gTable.style.backgroundImage = "url(images/" + img + ")";
+		gTable.style.backgroundImage = "url(../images/" + img + ")";
 		this.backGround = img;
 	}
 	//执行初始化
@@ -268,7 +268,7 @@ function objImgBlock(pic){
 	obj.x = 0;
 	obj.y = 0;
 	obj.toHtml = function(){
-		return "<img name=" + this.picName + " onclick=clickImg(" + this.x + "," + this.y + ") src=images/"
+		return "<img name=" + this.picName + " onclick=clickImg(" + this.x + "," + this.y + ") src=../images/"
 		 + this.picName + ".gif>"
 	}
 	return obj;
