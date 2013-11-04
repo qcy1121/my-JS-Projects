@@ -52,8 +52,8 @@ var Cell = (function(){
 var GridView = (function() {
 	var GridView = function(parent,xNum, yNum,cell_size) {
 		
-		this.xNum = xNum ? xNum : 25; // rows of view table
-		this.yNum = yNum ? yNum : 20; // columns of view table
+		this.xNum = xNum ? xNum : 15; // rows of view table
+		this.yNum = yNum ? yNum : 10; // columns of view table
 		if(this.xNum * this.yNum %2){
 			alert(" Wrong xNumber or yNumber");
 			this.xNum = 10;
