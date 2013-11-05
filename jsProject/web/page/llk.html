@@ -14,10 +14,14 @@ var draw=function(){
 	gridView.init();
 	$("#refresh").attr("disabled",false);
 	$("#refresh").removeAttr("disabled");
+	$("#hint").removeAttr("disabled");
 };
 var refresh= function(){
 	gridView.refreshGrid();
 	gridView.drawGrid();
+}
+var hint = function(){
+	gridView.hint();
 }
 
 	
@@ -26,6 +30,7 @@ var refresh= function(){
 <body>
 <input type="button" value = "draw " onclick="draw()" />
 <input type="button" id="refresh" value = "refresh "  disabled="disabled" onclick="refresh()" />
+<input type="button" id="hint" value="hint" disabled="disabled" onclick = "hint()" >
 <div id="tableDiv" style="width:600px;height:400px;">
 </div>
 </body>

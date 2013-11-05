@@ -71,6 +71,7 @@ var GridView = (function() {
 		hidCount:0,
 		allCount:0,
 		table:null,
+		tips:null,
 		zoomX:{
 		        set: function(zoom){
 		        	return this.setZoomX();
@@ -119,7 +120,7 @@ var GridView = (function() {
 			var imgCells = this.imgMap[img];
 			if(!imgCells){
 				imgCells = [];
-				this[img] = imgCells;
+				this.imgMap[img] = imgCells;
 			}
 			imgCells.push(cell);
 			
@@ -215,6 +216,8 @@ var GridView = (function() {
 				if(path){
 					this.drawPath(path);
 					this.hidSelected(this.selectedCell,cell);
+					this.removeHighlightCells();
+					this.checkDeadLock();
 				}else // can't select
 					this.selectCell(cell);
 			}else{// not same or first select
@@ -337,6 +340,7 @@ var GridView = (function() {
 			cell2.isHidden = true;
 			this.selectedCell = null;
 			this.hidCount +=2;
+			
 			//TODO , need add animation
 		},
 		selectCell:function(cell){
@@ -353,8 +357,68 @@ var GridView = (function() {
 			this.refreshGrid();
 			this.drawGrid();
 		},
-		tips:function(){
-			//var img = this.imgMap.
+		checkDeadLock:function(){
+			this.tips = this.checkCells();
+			if(!this.tips){
+				this.refreshGrid();
+				this.drawGrid();
+			}
+		},
+		hint:function(){
+			if(this.tips){
+				this.highlightCell(this.tips);
+				return;
+			}
+			var cells= this.checkCells();
+			if(cells){
+				this.tips = cells;
+				this.highlightCell(cells);
+			}else{
+				if(this.hidCount ==this.allCount){
+				this.init();
+				}else{
+					this.refreshGrid();
+					this.drawGrid();
+				}
+			}
+		},
+		checkCells:function(){
+			var cell, imgCells, img;
+			for ( var idx in this.cells) {
+				cell = this.cells[idx];
+				if (cell.isHidden)
+					continue;
+				img = cell.img;
+				imgCells = this.imgMap[img];
+				var cell1, cell2, len = imgCells.length;
+				for (var i = 0; i < len; i++) {
+					cell1 = imgCells[i];
+					if (cell1.isHidden)
+						continue;
+					for (var j = i + 1; j < len; j++) {
+						cell2 = imgCells[j];
+						if (cell2.isHidden)
+							continue;
+						if (this.findPath(cell1, cell2)) {
+							return [cell1,cell2];
+						}
+					}
+				}
+			}
+			return null;
+		},
+		highlightCell:function(cells){
+			for(var i in cells){
+				cells[i].jObj.addClass("highlight");
+			}
+		},
+		removeHighlightCells:function(){
+			if(this.tips){
+				for(var i in this.tips){
+					this.tips[i].jObj.removeClass("highlight");
+				}
+				this.tips= null;
+			}
 		}
 
 	};
