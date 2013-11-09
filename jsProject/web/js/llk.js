@@ -1,3 +1,4 @@
+
 var __extends = this.__extends || function(d, b) {
 	function __() {
 		this.constructor = d;
@@ -5,7 +6,7 @@ var __extends = this.__extends || function(d, b) {
 	__.prototype = b.prototype;
 	d.prototype = new __();
 };
-
+define(["exports","jquery","utils"],function(exports,$,utils){
 var GridCell = (function() {
 
 	function GridCell(cell/*Cell*/){
@@ -108,10 +109,13 @@ var GridView = (function() {
 		setZoomY:function(y){
 			
 		},
+		setImgNum:function(num){
+			this.imgNum = num;
+		},
 		initGridArray : function() {
 			this.gridCells = [];
 			this.cells = [];
-			this.imgMap = {};
+			this.imgMap = new utils.StringMap();
 			this.allCount = this.xNum * this.yNum;
 			this.hidCount = 0;
 			var img = null;
@@ -134,10 +138,10 @@ var GridView = (function() {
 			return new Cell(i,j,img);
 		},
 		pushToImgMap:function(img,cell){
-			var imgCells = this.imgMap[img];
+			var imgCells = this.imgMap.get(img);
 			if(!imgCells){
 				imgCells = [];
-				this.imgMap[img] = imgCells;
+				this.imgMap.set(img,imgCells);
 			}
 			imgCells.push(cell);
 			
@@ -409,7 +413,7 @@ var GridView = (function() {
 				if (cell.isHidden)
 					continue;
 				img = cell.img;
-				imgCells = this.imgMap[img];
+				imgCells = this.imgMap.get(img);
 				var cell1, cell2, len = imgCells.length;
 				for (var i = 0; i < len; i++) {
 					cell1 = imgCells[i];
@@ -502,6 +506,7 @@ var WordGridView = (function(_super){
 })(GridView);
 
 
+
 // GridViewCtrl the outer grid and control
 var GridViewCtrl = (function(){
 	function GridViewCtrl(gridView/*GridView*/){
@@ -517,3 +522,6 @@ var GridViewCtrl = (function(){
 	};
 	return GridViewCtrl;
 })();
+exports.GridView = GridView;
+exports.WordGridView = WordGridView;
+});

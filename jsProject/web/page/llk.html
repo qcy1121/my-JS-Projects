@@ -3,43 +3,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>连连看 javaScript 版</title>
-<script type="text/javascript" src ="../lib/jquery.js"></script>
-<script type="text/javascript" src ="../js/llk.js"></script>
+<script src="../lib/require.js" data-main="../js/main"></script>
 <link rel="stylesheet" href="../css/llk.css"/>
-<script type="text/javascript">
-var gridView;
-var draw=function(){
-	var div =$("#tableDiv");
-	gridView = new GridView(div);
-	gridView.init();
-	$("#refresh").attr("disabled",false);
-	$("#refresh").removeAttr("disabled");
-	$("#hint").removeAttr("disabled");
-};
-var drawWords=function(){
-	var div =$("#tableDiv");
-	gridView = new WordGridView(div);
-	gridView.init();
-	$("#refresh").attr("disabled",false);
-	$("#refresh").removeAttr("disabled");
-	$("#hint").removeAttr("disabled");
-};
-var refresh= function(){
-	gridView.refreshGrid();
-	gridView.drawGrid();
-}
-var hint = function(){
-	gridView.hint();
-}
-
-	
-</script>
 </head>
 <body>
-<input type="button" value = "draw " onclick="draw()" />
-<input type="button" value = "drawWords " onclick="drawWords()" />
-<input type="button" id="refresh" value = "refresh "  disabled="disabled" onclick="refresh()" />
-<input type="button" id="hint" value="hint" disabled="disabled" onclick = "hint()" >
+
 <div id="tableDiv" style="width:600px;height:400px;">
 </div>
 </body>
