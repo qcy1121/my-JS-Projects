@@ -147,6 +147,10 @@ var GridView = (function() {
 			
 		},
 		getRandomImg:function(isSort){
+			var imgNum = this.imgMap.size;
+			if(imgNum== this.imgNum && this.imgs.length>imgNum){
+				this.imgs = this.imgs.slice(0,imgNum);
+			}
 			if(!isSort){
 				var randomIdx =Math.floor(Math.random()*(this.imgs.length));
 				return this.imgs[randomIdx];
@@ -260,21 +264,6 @@ var GridView = (function() {
 
 			tp1= {x:cell1.x,y:cell1.y};
 			tp2 = {x:cell2.x,y:cell2.y};
-			// case 1: the two cell in one line
-			/*if(cell1.x == cell2.x){ // x axis is same, check each point in y axis
-				if(cell1.y>cell2.y){
-					tp1= {x:cell2.x,y:cell2.y};
-					tp2 = {x:cell1.x,y:cell1.y};
-				}
-				if(this.canLinkWithLine(tp1,tp2,true))return [tp1,tp2];
-			}else if(cell1.y == cell2.y){ // y axis is same, check each point x axis
-				if(cell1.x>cell2.x){
-					tp1= {x:cell2.x,y:cell2.y};
-					tp2 = {x:cell1.x,y:cell1.y};
-				}
-				if(this.canLinkWithLine(tp1,tp2,false))return [tp1,tp2];
-				
-			}*/
 			// get the farthest 4 points for the two point to link.
 			var bounds1 = this.getBounds(cell1),
 				bounds2 = this.getBounds(cell2);

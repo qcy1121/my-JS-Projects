@@ -14,6 +14,7 @@ require(['jquery',"llk"], function( $,llk ) {
 	var draw=function(){
 		var div =$("#tableDiv");
 		gridView = new llk.GridView(div);
+		gridView.setImgNum(10);
 		gridView.init();
 		$("#refresh").attr("disabled",false);
 		$("#refresh").removeAttr("disabled");
@@ -22,6 +23,7 @@ require(['jquery',"llk"], function( $,llk ) {
 	var drawWords=function(){
 		var div =$("#tableDiv");
 		gridView = new llk.WordGridView(div);
+		gridView.setImgNum(10);
 		gridView.init();
 		$("#refresh").attr("disabled",false);
 		$("#refresh").removeAttr("disabled");
@@ -34,13 +36,12 @@ require(['jquery',"llk"], function( $,llk ) {
 	var hint = function(){
 		gridView.hint();
 	};
-	$("#tableDiv").before($('<div><input type="button" value = "draw " id="draw" />'+
-'<input type="button" value = "drawWords " id="drawWords" />'+
-'<input type="button" id="refresh" value = "refresh "  disabled="disabled" id="refresh" />'+
-'<input type="button" id="hint" value="hint" disabled="disabled" id = "hint" ></div>'));
-		$(document).on("click",":button",function(){
+	$("#tableDiv").before($('<div class="myButtonDiv" ><div class="myButton" id="draw" >draw</div>'+
+'<div class="myButton" id="drawWords" >drawWords</div>'+
+'<div class="myButton" id="refresh" disabled="disabled" id="refresh" >refresh</div>'+
+'<div class="myButton" id="hint" disabled="disabled" >hints</div></div>'));
+		$(document).on("click","div.myButton",function(){
 	//$(":button").on("click",function(){
-		console.log("click");
 			var id= $(this).attr("id");
 			switch (id){
 				case "draw": draw();
