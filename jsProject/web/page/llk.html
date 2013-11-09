@@ -16,6 +16,14 @@ var draw=function(){
 	$("#refresh").removeAttr("disabled");
 	$("#hint").removeAttr("disabled");
 };
+var drawWords=function(){
+	var div =$("#tableDiv");
+	gridView = new WordGridView(div);
+	gridView.init();
+	$("#refresh").attr("disabled",false);
+	$("#refresh").removeAttr("disabled");
+	$("#hint").removeAttr("disabled");
+};
 var refresh= function(){
 	gridView.refreshGrid();
 	gridView.drawGrid();
@@ -29,6 +37,7 @@ var hint = function(){
 </head>
 <body>
 <input type="button" value = "draw " onclick="draw()" />
+<input type="button" value = "drawWords " onclick="drawWords()" />
 <input type="button" id="refresh" value = "refresh "  disabled="disabled" onclick="refresh()" />
 <input type="button" id="hint" value="hint" disabled="disabled" onclick = "hint()" >
 <div id="tableDiv" style="width:600px;height:400px;">

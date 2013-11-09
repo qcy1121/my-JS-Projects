@@ -8,14 +8,14 @@ var __extends = this.__extends || function(d, b) {
 
 var GridCell = (function() {
 
-	var GridCell = function(cell/*Cell*/){
+	function GridCell(cell/*Cell*/){
 		this.cell = cell;
 	};
 	return GridCell;
 })();
 
 var Cell = (function(){
-	var Cell = function(x, y,img ){
+	function Cell(x, y,img ){
 		this.x = x;
 		this.y = y;
 		this.img = img;
@@ -29,8 +29,12 @@ var Cell = (function(){
 			click:function(event){
 				this.view.onClick(this);
 			},
+			setJobj:function(){
+				this.jObj=$("<img src="+this.img+" class='imgCell' />");
+			},
 			draw:function(){
-				var cell = $("<img src="+this.img+" class='imgCell' />");
+				this.setJobj();
+				var cell = this.jObj;
 				var _this = this;
 				//this.click = 
 				cell.click(function(event){
@@ -47,10 +51,20 @@ var Cell = (function(){
 	return Cell;
 	
 })();
+var WordCell = (function(_super){
+	__extends(WordCell,_super);
+	function WordCell(i,j,img){
+		_super.call(this,i,j,img);
+	};
+	WordCell.prototype.setJobj=function(){
+		this.jObj = $("<div class='imgCell'>"+this.img+"</div>");
+	};
+	return WordCell;
+})(Cell);
 
 // the grid
 var GridView = (function() {
-	var GridView = function(parent,xNum, yNum,cell_size) {
+	function GridView(parent,xNum, yNum,cell_size) {
 		
 		this.xNum = xNum ? xNum : 15; // rows of view table
 		this.yNum = yNum ? yNum : 10; // columns of view table
@@ -106,7 +120,7 @@ var GridView = (function() {
 				for(var j=0;j<this.yNum;j++){
 					if((this.cells.length % 2)==0)img = this.getRandomImg();
 					//console.log(img);
-					cell = new Cell(i,j,img);
+					cell = this.createNewCell(i,j,img);
 					cell.view = this;
 					//cell.onclick = this.onClick;
 					gridCell = new GridCell(cell);
@@ -115,6 +129,9 @@ var GridView = (function() {
 					this.pushToImgMap(img, cell);
 				}
 			}
+		},
+		createNewCell:function(i,j,img){
+			return new Cell(i,j,img);
 		},
 		pushToImgMap:function(img,cell){
 			var imgCells = this.imgMap[img];
@@ -150,6 +167,9 @@ var GridView = (function() {
 				alert("Can't resfresh, please click draw button");
 				return;
 			}
+
+			this.cleanOptions();
+			
 			var gridCell,cell,randomCell;
 			for(var i=0;i<this.xNum;i++){
 				for(var j=0;j<this.yNum;j++){
@@ -347,7 +367,7 @@ var GridView = (function() {
 			if(this.selectedCell)
 				this.selectedCell.jObj.removeClass("selected");
 			this.selectedCell = cell;
-			this.selectedCell.jObj.addClass("selected");
+			if(cell)this.selectedCell.jObj.addClass("selected");
 		},
 		init : function() {
 			var path = this.basePath+"../images";
@@ -419,6 +439,13 @@ var GridView = (function() {
 				}
 				this.tips= null;
 			}
+		},
+		cleanOptions:function(){
+			this.tips=null;
+			this.selectCell(null);
+		},
+		move:function(){
+			
 		}
 
 	};
@@ -434,10 +461,50 @@ var GridView = (function() {
     });*/
 	return GridView;
 })();
+var WordGridView = (function(_super){
+	__extends(WordGridView,_super);
+	function WordGridView(parent,wordsArray){
+		_super.call(this,parent);
+		if(!wordsArray|| !wordsArray.length){
+			//alert("There is no words input!");
+			//return;
+			wordsArray = ['土','王','免','兔','代','伐','休','体','盲','育','育','育','鸟','乌','鸣','呜','师','帅','家','侯','候',
+			              '壶','壶','斤','斥','飞','戈','享','亨','又','叉','巾','币','勺','匀','爪','瓜','几','凡','尸','户','厂','广',
+			              '今','令','勿','匆','予','矛','九','丸','良','良','折','拆','析','拆','析','诉','住','往','茶','荼','快','快',
+			              '吴','吴','狠','狼','扰','拢','洗','洗','冶','治','理','埋','云','去','库','库','西','百','洒','酒','早','旱',
+			              '侍','待','仿','彷','倘','尚','欠','久','牛','生','干','午','味','昧','昕','昕','唔','晤','喧','瞌','哺','晴',
+			              '响','晌','呢','昵','暖','暖','历','厉','氏','民','也','也','血','皿','思','恩','旦','亘','夫','失','晴','睛',
+			              '徒','徙','暑','署','毫','毫','账','帐','气','乞','史','吏','戎','戒','了','子','沪','泸','幼','幻','伯','伯',
+			              '刀','刃','王','主','玉','大','太','犬','木','本','术','戊','戍','戌','兵','乒','乓','哀','衷','衰','尤','尤','龙',
+			              '往','住','佳','凭','筑','就','杏','杳','查'];
+		}
+		this.wordsArray  = wordsArray;
+	}
+	WordGridView.prototype.createNewCell=function(i,j,img){
+		return new WordCell(i,j,img);
+	},
+	WordGridView.prototype.init=function(){
+		this.initWords(this.wordsArray);
+		this.initGridArray();
+
+		this.refreshGrid();
+		this.drawGrid();
+	};
+	WordGridView.prototype.initWords=function(array){
+		var num = array.length;
+		
+		this.imgs = [];
+		for(var i=0;i<num;i++){
+			this.imgs.push(array[i]);
+		}
+	};
+	return WordGridView;
+})(GridView);
+
 
 // GridViewCtrl the outer grid and control
 var GridViewCtrl = (function(){
-	var GridViewCtrl = function(gridView/*GridView*/){
+	function GridViewCtrl(gridView/*GridView*/){
 
 		this.vWidth = 600;// width of view
 		this.vHeight = 400; // height of view
