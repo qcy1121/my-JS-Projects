@@ -41,13 +41,13 @@ var Cell = (function(){
 				cell.click(function(event){
 					_this.click(event,_this.view);
 				}); 
-				cell.css("display",this.isHidden?"none":"block");
+				cell.css("visibility",this.isHidden?"hidden":"visible");
 				this.jObj = cell;
 				return cell;
-			},
+			}/*,
 			toHtml:function(){
 				return "<img src="+this.img+"  class='imgCell' style='display:block' />";
-			}
+			}*/
 	};
 	return Cell;
 	
@@ -67,8 +67,8 @@ var WordCell = (function(_super){
 var GridView = (function() {
 	function GridView(parent,xNum, yNum,cell_size) {
 		
-		this.xNum = xNum ? xNum : 4; // rows of view table
-		this.yNum = yNum ? yNum : 5; // columns of view table
+		this.xNum = xNum ? xNum : 3; // rows of view table
+		this.yNum = yNum ? yNum : 4; // columns of view table
 		if(this.xNum * this.yNum %2){
 			alert(" Wrong xNumber or yNumber");
 			this.xNum = 10;
@@ -194,6 +194,8 @@ var GridView = (function() {
 					this.changeGridCell(gridCell,randomCell);
 				}
 			}
+
+			this.checkDeadLock();
 		},
 		getRandomCell:function(){
 			var randomNum = Math.floor(Math.random()*(this.cells.length));
@@ -346,8 +348,8 @@ var GridView = (function() {
 		},
 		
 		hidSelected:function(cell1,cell2){
-			cell1.jObj.css("display","none");
-			cell2.jObj.css("display","none");
+			cell1.jObj.css("visibility","hidden");
+			cell2.jObj.css("visibility","hidden");
 			cell1.isHidden = true;
 			cell2.isHidden = true;
 			this.selectedCell = null;
