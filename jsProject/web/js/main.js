@@ -14,7 +14,7 @@ require(['jquery',"llk"], function( $,llk ) {
 	var draw=function(){
 		var div =$("#tableDiv");
 		gridView = new llk.GridView(div);
-		gridView.setImgNum(10);
+		//gridView.setImgNum(10);
 		gridView.init();
 		$("#refresh").attr("disabled",false);
 		$("#refresh").removeAttr("disabled");
@@ -23,7 +23,7 @@ require(['jquery',"llk"], function( $,llk ) {
 	var drawWords=function(){
 		var div =$("#tableDiv");
 		gridView = new llk.WordGridView(div);
-		gridView.setImgNum(10);
+		//gridView.setImgNum(10);
 		gridView.init();
 		$("#refresh").attr("disabled",false);
 		$("#refresh").removeAttr("disabled");

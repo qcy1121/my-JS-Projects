@@ -67,8 +67,8 @@ var WordCell = (function(_super){
 var GridView = (function() {
 	function GridView(parent,xNum, yNum,cell_size) {
 		
-		this.xNum = xNum ? xNum : 15; // rows of view table
-		this.yNum = yNum ? yNum : 10; // columns of view table
+		this.xNum = xNum ? xNum : 4; // rows of view table
+		this.yNum = yNum ? yNum : 5; // columns of view table
 		if(this.xNum * this.yNum %2){
 			alert(" Wrong xNumber or yNumber");
 			this.xNum = 10;
@@ -87,6 +87,7 @@ var GridView = (function() {
 		allCount:0,
 		table:null,
 		tips:null,
+		imgNum:20,
 		zoomX:{
 		        set: function(zoom){
 		        	return this.setZoomX();
@@ -171,10 +172,10 @@ var GridView = (function() {
 			}
 		},
 		refreshGrid : function() {
-			if(this.allCount - this.hidCount <=2){
-				alert("Can't resfresh, please click draw button");
-				return;
-			}
+//			if(this.allCount - this.hidCount <=2){
+//				alert("Can't resfresh, please click draw button");
+//				return;
+//			}
 
 			this.cleanOptions();
 			
@@ -217,8 +218,6 @@ var GridView = (function() {
 		drawGrid:function(){
 			this.parentElement.html("");
 			var table = $("<table id='gridTable' class='gridTable'></table>"),col,cell;
-
-			
 			for(var i=0;i<this.yNum;i++){
 				col = $("<tr></tr>");
 				col.appendTo(table);
@@ -397,6 +396,11 @@ var GridView = (function() {
 		},
 		checkCells:function(){
 			var cell, imgCells, img;
+			if(this.hidCount == this.allCount){
+				alert("Good Job!");
+				this.init();
+				return;
+			}
 			for ( var idx in this.cells) {
 				cell = this.cells[idx];
 				if (cell.isHidden)
@@ -462,7 +466,7 @@ var WordGridView = (function(_super){
 			//alert("There is no words input!");
 			//return;
 			wordsArray = ['土','王','免','兔','代','伐','休','体','盲','育','育','育','鸟','乌','鸣','呜','师','帅','家','侯','候',
-			              '壶','壶','斤','斥','飞','戈','享','亨','又','叉','巾','币','勺','匀','爪','瓜','几','凡','尸','户','厂','广',
+			              '壶','壶','斤','斥','飞','戈','享','亨','又','叉','巾','币','勺','匀','爪','瓜','几','凡','厂','广',
 			              '今','令','勿','匆','予','矛','九','丸','良','良','折','拆','析','拆','析','诉','住','往','茶','荼','快','快',
 			              '吴','吴','狠','狼','扰','拢','洗','洗','冶','治','理','埋','云','去','库','库','西','百','洒','酒','早','旱',
 			              '侍','待','仿','彷','倘','尚','欠','久','牛','生','干','午','味','昧','昕','昕','唔','晤','喧','瞌','哺','晴',
