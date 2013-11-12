@@ -6,7 +6,7 @@ var __extends = this.__extends || function(d, b) {
 	__.prototype = b.prototype;
 	d.prototype = new __();
 };
-define(["exports","jquery","utils"],function(exports,$,utils){
+define(["exports","jquery","app/utils"],function(exports,$,utils){
 var GridCell = (function() {
 
 	function GridCell(cell/*Cell*/){

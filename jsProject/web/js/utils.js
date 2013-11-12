@@ -1,4 +1,4 @@
-define("utils",["exports"],function(exports){
+define(["exports"],function(exports){
 var StringMap = (function() {
 	function StringMap() {
 		this.size = 0;

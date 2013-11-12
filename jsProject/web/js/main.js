@@ -3,13 +3,13 @@ require.config({
 
 	paths : {
 		jquery : "lib/jquery",
+		jui:"lib/jquery-ui",
 		jqm : "lib/jquery.mobile-1.3.2",
-		llk : "js/llk",
-		utils:"js/utils"
+		app:"js"
 	}
 });
 
-require(['jquery',"llk"], function( $,llk ) {
+require(['jquery',"app/llk",'jui'], function( $,llk ) {
 	var gridView;
 	var draw=function(){
 		var div =$("#tableDiv");
