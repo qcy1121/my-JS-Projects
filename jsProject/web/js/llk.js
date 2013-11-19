@@ -6,7 +6,7 @@ var __extends = this.__extends || function(d, b) {
 	__.prototype = b.prototype;
 	d.prototype = new __();
 };
-define(["exports","jquery","app/utils"],function(exports,$,utils){
+define(["exports","jquery","app/utils"],function(exports,$){
 var GridCell = (function() {
 
 	function GridCell(cell/*Cell*/){
@@ -57,9 +57,11 @@ var WordCell = (function(_super){
 	function WordCell(i,j,img){
 		_super.call(this,i,j,img);
 	};
+
 	WordCell.prototype.setJobj=function(){
 		this.jObj = $("<div class='imgCell'>"+this.img+"</div>");
 	};
+
 	return WordCell;
 })(Cell);
 
@@ -67,27 +69,28 @@ var WordCell = (function(_super){
 var GridView = (function() {
 	function GridView(parent,xNum, yNum,cell_size) {
 		
-		this.xNum = xNum ? xNum : 3; // rows of view table
-		this.yNum = yNum ? yNum : 4; // columns of view table
+		this.xNum = xNum ? xNum : 10; // rows of view table
+		this.yNum = yNum ? yNum : 5; // columns of view table
 		if(this.xNum * this.yNum %2){
 			alert(" Wrong xNumber or yNumber");
 			this.xNum = 10;
 		}
+
+		this.grid = null;
+		this.cells=null;
+		this.imgs=null;
+		this.imgMap=null;
+		this.basePath="./";
+		this.selectedCell=null;
+		this.hidCount=0;
+		this.allCount=0;
+		this.table=null;
+		this.tips=null;
+		this.imgNum=20;
 		this.cell_size = cell_size?cell_size:40; // size of square cell.
 		this.parentElement = parent;
 	};
 	GridView.prototype = {
-		grid : null,
-		cells:null,
-		imgs:null,
-		imgMap:null,
-		basePath:"./",
-		selectedCell:null,
-		hidCount:0,
-		allCount:0,
-		table:null,
-		tips:null,
-		imgNum:20,
 		zoomX:{
 		        set: function(zoom){
 		        	return this.setZoomX();
@@ -116,7 +119,7 @@ var GridView = (function() {
 		initGridArray : function() {
 			this.gridCells = [];
 			this.cells = [];
-			this.imgMap = new utils.StringMap();
+			this.imgMap = new StringMap();
 			this.allCount = this.xNum * this.yNum;
 			this.hidCount = 0;
 			var img = null;
@@ -172,11 +175,6 @@ var GridView = (function() {
 			}
 		},
 		refreshGrid : function() {
-//			if(this.allCount - this.hidCount <=2){
-//				alert("Can't resfresh, please click draw button");
-//				return;
-//			}
-
 			this.cleanOptions();
 			
 			var gridCell,cell,randomCell;
@@ -444,6 +442,15 @@ var GridView = (function() {
 			this.selectCell(null);
 		},
 		move:function(){
+			
+		},
+		toJson:function(){
+			
+		},
+		formJson:function(json){
+			
+		},
+		pause:function(){
 			
 		}
 

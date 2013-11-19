@@ -1,4 +1,4 @@
-define(["exports"],function(exports){
+
 var StringMap = (function() {
 	function StringMap() {
 		this.size = 0;
@@ -74,5 +74,4 @@ var StringMap = (function() {
 	};
 	return StringMap;
 })();
-exports.StringMap = StringMap;
-});
+

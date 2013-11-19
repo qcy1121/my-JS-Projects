@@ -10,24 +10,27 @@ require.config({
 });
 
 require(['jquery',"app/llk",'jui'], function( $,llk ) {
-	var gridView;
+	
+	var gridView,  div =$("#tableDiv"), $out = $("#outDiv");
+	$out.css("display","block");
+	var width=$out.width(),height=$out.height();
+console.log(width+"  "+height);
+
+	
 	var draw=function(){
-		var div =$("#tableDiv");
+		
 		gridView = new llk.GridView(div);
 		//gridView.setImgNum(10);
 		gridView.init();
-		$("#refresh").attr("disabled",false);
-		$("#refresh").removeAttr("disabled");
-		$("#hint").removeAttr("disabled");
+		enableBtn();
 	};
 	var drawWords=function(){
-		var div =$("#tableDiv");
 		gridView = new llk.WordGridView(div);
 		//gridView.setImgNum(10);
 		gridView.init();
-		$("#refresh").attr("disabled",false);
-		$("#refresh").removeAttr("disabled");
-		$("#hint").removeAttr("disabled");
+		enableBtn();
+		//$("#refresh").attr("disabled",false).removeAttr("disabled");
+		//$("#hint").removeAttr("disabled");
 	};
 	var refresh= function(){
 		gridView.refreshGrid();
@@ -35,27 +38,30 @@ require(['jquery',"app/llk",'jui'], function( $,llk ) {
 	};
 	var hint = function(){
 		gridView.hint();
+		//alert("aa");
 	};
-	$("#tableDiv").before($('<div class="myButtonDiv" ><div class="myButton" id="draw" >draw</div>'+
-'<div class="myButton" id="drawWords" >drawWords</div>'+
-'<div class="myButton" id="refresh" disabled="disabled" id="refresh" >refresh</div>'+
-'<div class="myButton" id="hint" disabled="disabled" >hints</div></div>'));
-		$(document).on("click","div.myButton",function(){
-	//$(":button").on("click",function(){
-			var id= $(this).attr("id");
-			switch (id){
-				case "draw": draw();
-					 break;
-				case "drawWords":drawWords();
-					 break;
-				
-				case "refresh": refresh();
-					break;
-				case "hint": hint();
-					break;
-				default: return;
-			}
-	});
+	var maxtime =100,time,shorttime=3;
+	var show = function(){
+		 $("#draw").button({icons:{ primary:"ui-icon-run-01"},text:false}).click(draw);
+		 $("#drawWords").button({icons:{ primary:"ui-icon-word-01"},text:false}).click(drawWords);
+		 $("#refresh").button({icons:{ primary:"ui-icon-refresh-01"},disabled:true,text:false}).click(refresh);
+		 $("#hint").button({icons:{ primary:"ui-icon-hint-01"},disabled:true,text:false}).click(hint);
+		 $("#draw,#drawWords,#refresh,#hint").addClass("ui-button-block");
+		 $("#timeBar").progressbar({max:maxtime,value:maxtime}).addClass("timeBar");
+		 $("#awardBar").progressbar({max:shorttime,value:0}).addClass("awardBar");
+	};
+	function enableBtn(){
+		$("#hint,#refresh").button("option",{disabled:false});
+	};
 	
+	function alert(arg){
+		if($dialog){
+			$dialog =$("<div id='dialog'></div>");
+		}
+		
+		$dialog.text(arg).dialog();
+	};
+	
+	show();
 });
 
