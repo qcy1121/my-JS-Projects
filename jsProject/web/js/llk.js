@@ -67,8 +67,8 @@ var WordCell = (function(_super){
 
 // the grid
 var GridView = (function() {
-	function GridView(parent,xNum, yNum,cell_size) {
-		
+	function GridView(parent,opts) {
+		var xNum =opts.xNum, yNum = opts.yNum,timerCallback =opts.timerCallback,cell_size = opts.cell_size,timeObj= opts.timeObj;
 		this.xNum = xNum ? xNum : 10; // rows of view table
 		this.yNum = yNum ? yNum : 5; // columns of view table
 		if(this.xNum * this.yNum %2){
@@ -89,6 +89,11 @@ var GridView = (function() {
 		this.imgNum=20;
 		this.cell_size = cell_size?cell_size:40; // size of square cell.
 		this.parentElement = parent;
+		this.timerId= null;
+		this.timeObj = timeObj;
+		// this.timeStart = Date.getTime() ; this.timeNow = ... // Using precise time
+		this.timeStep = 500;
+		this.underlay = null;
 	};
 	GridView.prototype = {
 		zoomX:{
@@ -216,7 +221,8 @@ var GridView = (function() {
 			
 		},
 		drawGrid:function(){
-			this.parentElement.html("");
+			//this.underlay.destory();
+			this.parentElement.empty();
 			var table = $("<table id='gridTable' class='gridTable'></table>"),col,cell;
 			for(var i=0;i<this.yNum;i++){
 				col = $("<tr></tr>");
@@ -232,6 +238,7 @@ var GridView = (function() {
 			//this.parentElement.append(table);
 
 			table.appendTo(this.parentElement);
+			this.underlay = $("<div>").addClass("underlay").css({width:table.width(),height:table.height(),position:"absolute",top:"0px",left:"0px"}).appendTo(this.parentElement);
 			this.table = table;
 		},
 		onClick:function(cell/*cell*/){
@@ -365,9 +372,16 @@ var GridView = (function() {
 			var path = this.basePath+"../images";
 			this.initImgs(path,31);
 			this.initGridArray();
-
+			
 			this.refreshGrid();
 			this.drawGrid();
+			this.startTimer();
+		},
+		initTimer:function(){
+			this.cleanTimer();
+			this.timeObj.time1= this.timeObj.maxtime;
+			this.timeObj.time2 = 0;
+			this.startTimer();
 		},
 		checkDeadLock:function(){
 			this.tips = this.checkCells();
@@ -450,9 +464,40 @@ var GridView = (function() {
 		formJson:function(json){
 			
 		},
+		destroy:function(){
+			this.cleanTimer();
+			this.cleanOptions();
+		},
 		pause:function(){
+			this.pauseTimer();
+			 
+		},
+		goon:function(){
+			this.startTimer();
 			
+		},
+		startTimer:function(){
+			var timeStep = this.timeStep, step = timeStep/1000,_this = this;
+			var timerCtr = function(){
+				if(_this.timeObj.time1<=0)_this.gameover();
+				_this.timeObj.time1-=step;
+				if(_this.timeObj.time2)_this.timeObj.time2-=step;
+				_this.timeObj.timerCallback();
+			};
+			this.timerId = setInterval(timerCtr,timeStep);
+			this.underlay.css("display","none");
+		},
+		pauseTimer:function(){
+			this.underlay.css("display","block");
+			clearInterval(this.timerId);
+			
+		},
+		cleanTimer:function(){
+			clearInterval(this.timerId);
 		}
+		
+		
+		
 
 	};
 	/*Object.defineProperty(GridView.prototype, "zoomX", {
@@ -469,8 +514,9 @@ var GridView = (function() {
 })();
 var WordGridView = (function(_super){
 	__extends(WordGridView,_super);
-	function WordGridView(parent,wordsArray){
+	function WordGridView(parent,opts){
 		_super.call(this,parent);
+		var wordsArray = opts.wordArray;
 		if(!wordsArray|| !wordsArray.length){
 			//alert("There is no words input!");
 			//return;
@@ -495,6 +541,7 @@ var WordGridView = (function(_super){
 
 		this.refreshGrid();
 		this.drawGrid();
+		_super.apply(this);
 	};
 	WordGridView.prototype.initWords=function(array){
 		var num = array.length;

@@ -56,7 +56,13 @@ td img {
 	height:15px;
 	display:block;
 }
-
+.tableDiv{
+	position:relative;
+}
+.underlay{
+	background: gray;
+	z-index:100;
+}
 .imgCell {
 	border-radius: 11px;
 	/*border-top: 1px solid #575456;*/
@@ -130,7 +136,12 @@ td img {
 .ui-button .ui-icon.ui-icon-refresh-01{
 	background-image: url(../svg/refresh.svg);
 }
-
+.ui-button .ui-icon.ui-icon-lock-01{
+	background-image:url(../svg/lock.svg);
+}
+.ui-button .ui-icon.ui-icon-unlock-01{
+	background-image:url(../svg/unlock.svg);
+}
 
 
 
