@@ -16,7 +16,7 @@ require(['jquery',"app/llk",'jui'], function( $,llk ) {
 	var width=$out.width(),height=$out.height();
 console.log(width+"  "+height);
 
-var maxtime =100,time,shorttime=3;
+var maxtime =100,time,shorttime=3,islocked = false;;
 var timeObj = {
 		maxtime:maxtime,
 		shorttime:shorttime,
@@ -25,23 +25,29 @@ var timeObj = {
 		timerCallback : function(){
 			$("#timeBar").progressbar("value",this.time1);
 			$("#awardBar").progressbar("value",this.time2);
+			$("#links").text(this.time2);
+			$("#timeleft").text(this.time1);
 			if(this.time1<=10){
 				//$("timeBar").toggleClass("red");
 			}
 		}
 	};
-	var opts = {
-			timeObj :timeObj
-	};
+	var createOpts = function(){
+		var time = $.extend({},timeObj);
+		return {
+			timeObj:time
+		};
+	} ;
 	var draw=function(){
-		
-		gridView = new llk.GridView(div,opts);
+		if(gridView)gridView.destroy();
+		gridView = new llk.GridView(div,createOpts());
 		//gridView.setImgNum(10);
 		gridView.init();
 		enableBtn();
 	};
 	var drawWords=function(){
-		gridView = new llk.WordGridView(div,opts);
+		if(gridView)gridView.destroy();
+		gridView = new llk.WordGridView(div,createOpts());
 		//gridView.setImgNum(10);
 		gridView.init();
 		enableBtn();
@@ -54,43 +60,52 @@ var timeObj = {
 	};
 	var hint = function(){
 		gridView.hint();
-		//alert("aa");
+		alert("aa");
 	};
-	var islocked = false;
+	
 	var lock = function(){
 		if(islocked){
+			enableBtn();
 			gridView.goon();
 			islocked= false;
-			 $("#lock").button("option","icon",{primary:"ui-icon-unlock-01"});
+			 $("#lock").button("option","icons",{primary:"my-ui-icon-unlock-01 my-ui-icon"});
 		}else{
+			disableBtn();
 			gridView.pause();
 			islocked= true;
-			 $("#lock").button("option","icon",{primary:"ui-icon-lock-01"});
+			 $("#lock").button("option","icons",{primary:"my-ui-icon-lock-01 my-ui-icon"});
 		}
 	};
 	var show = function(){
-		 $("#draw").button({icons:{ primary:"ui-icon-run-01"},text:false}).click(draw);
-		 $("#drawWords").button({icons:{ primary:"ui-icon-word-01"},text:false}).click(drawWords);
-		 $("#refresh").button({icons:{ primary:"ui-icon-refresh-01"},disabled:true,text:false}).click(refresh);
-		 $("#hint").button({icons:{ primary:"ui-icon-hint-01"},disabled:true,text:false}).click(hint);
-		 $("#lock").button({icons:{primary:"ui-icon-lock-01"},disabled:true,text:false}).click(lock);
+		 $("#draw").button({icons:{ primary:"my-ui-icon-run-01 my-ui-icon"},text:false}).click(draw);
+		 $("#drawWords").button({icons:{ primary:"my-ui-icon-word-01 my-ui-icon"},text:false}).click(drawWords);
+		 $("#refresh").button({icons:{ primary:"my-ui-icon-refresh-01 my-ui-icon"},disabled:true,text:false}).click(refresh);
+		 $("#hint").button({icons:{ primary:"my-ui-icon-hint-01 my-ui-icon"},disabled:true,text:false}).click(hint);
+		 $("#lock").button({icons:{primary:"my-ui-icon-lock-01 my-ui-icon"},disabled:true,text:false}).click(lock);
 		 $("#draw,#drawWords,#refresh,#hint,#lock").addClass("ui-button-block");
 		 $("#timeBar").progressbar({max:maxtime,value:maxtime}).addClass("timeBar");
 		 $("#awardBar").progressbar({max:shorttime,value:0}).addClass("awardBar");
 	};
 	function enableBtn(){
-		$("#hint,#refresh,#lock").button("option",{disabled:false});
+		$("#hint,#refresh,#lock").button("enable");
+		islocked = false;
 	};
+	function disableBtn(){
+		$("#hint,#refresh").button("disable");
+	}
 	
-	
-	function alert(arg){
-		if($dialog){
-			$dialog =$("<div id='dialog'></div>");
+	var $dialog,$content,$okBtn,alertfunc=function(arg){
+		
+		if(!$dialog){
+			$okBtn=$("<div>").button({text:"OK"}).click(function(){$dialog.dialog("close");});
+			$content = $("<div>");
+			$dialog =$("<div id='dialog'></div>").append($content).append($okBtn);
 		}
+		$content.html(arg);
 		
 		$dialog.text(arg).dialog();
 	};
-	
+	window.alert = alertfunc;
 	show();
 });
 

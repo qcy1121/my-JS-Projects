@@ -68,14 +68,6 @@ var WordCell = (function(_super){
 // the grid
 var GridView = (function() {
 	function GridView(parent,opts) {
-		var xNum =opts.xNum, yNum = opts.yNum,timerCallback =opts.timerCallback,cell_size = opts.cell_size,timeObj= opts.timeObj;
-		this.xNum = xNum ? xNum : 10; // rows of view table
-		this.yNum = yNum ? yNum : 5; // columns of view table
-		if(this.xNum * this.yNum %2){
-			alert(" Wrong xNumber or yNumber");
-			this.xNum = 10;
-		}
-
 		this.grid = null;
 		this.cells=null;
 		this.imgs=null;
@@ -86,16 +78,54 @@ var GridView = (function() {
 		this.allCount=0;
 		this.table=null;
 		this.tips=null;
+		this.xNum = opts.xNum ? opts.xNum : 10; // rows of view table
+		this.yNum =  opts.yNum ?  opts.yNum : 5; // columns of view table
+		if(this.xNum * this.yNum %2){
+			alert(" Wrong xNumber or yNumber");
+			this.xNum = 10;
+		}
 		this.imgNum=20;
-		this.cell_size = cell_size?cell_size:40; // size of square cell.
+		this.cell_size = opts.cell_size?opts.cell_size:40; // size of square cell.
 		this.parentElement = parent;
 		this.timerId= null;
-		this.timeObj = timeObj;
+		this.timeObj = opts.timeObj;
 		// this.timeStart = Date.getTime() ; this.timeNow = ... // Using precise time
 		this.timeStep = 500;
 		this.underlay = null;
+		this.stop=false;
+		//this.parent = parent,
+		//this.opts = opts;
+		//this.initialize(parent,opts);
 	};
 	GridView.prototype = {
+		/*initialize : function(parent,opts){
+			this.xNum = opts.xNum ? opts.xNum : 10; // rows of view table
+			this.yNum =  opts.yNum ?  opts.yNum : 5; // columns of view table
+			if(this.xNum * this.yNum %2){
+				alert(" Wrong xNumber or yNumber");
+				this.xNum = 10;
+			}
+
+			this.grid = null;
+			this.cells=null;
+			this.imgs=null;
+			this.imgMap=null;
+			this.basePath="./";
+			this.selectedCell=null;
+			this.hidCount=0;
+			this.allCount=0;
+			this.table=null;
+			this.tips=null;
+			this.imgNum=20;
+			this.cell_size = opts.cell_size?opts.cell_size:40; // size of square cell.
+			this.parentElement = parent;
+			this.timerId= null;
+			this.timeObj = opts.timeObj;
+			// this.timeStart = Date.getTime() ; this.timeNow = ... // Using precise time
+			this.timeStep = 500;
+			this.underlay = null;
+			this.stop=false;
+		},*/
 		zoomX:{
 		        set: function(zoom){
 		        	return this.setZoomX();
@@ -238,7 +268,8 @@ var GridView = (function() {
 			//this.parentElement.append(table);
 
 			table.appendTo(this.parentElement);
-			this.underlay = $("<div>").addClass("underlay").css({width:table.width(),height:table.height(),position:"absolute",top:"0px",left:"0px"}).appendTo(this.parentElement);
+			if(!this.underlay)this.underlay = $("<div>").addClass("underlay").css({width:table.width(),height:table.height(),position:"absolute",top:"0px",left:"0px"}).appendTo(this.parentElement);
+			else this.underlay.appendTo(this.parentElement);
 			this.table = table;
 		},
 		onClick:function(cell/*cell*/){
@@ -248,10 +279,7 @@ var GridView = (function() {
 			if(this.selectedCell && (this.selectedCell.img == cell.img) && (this.selectedCell != cell)){
 				var path = this.findPath(this.selectedCell,cell);
 				if(path){
-					this.drawPath(path);
-					this.hidSelected(this.selectedCell,cell);
-					this.removeHighlightCells();
-					this.checkDeadLock();
+					this.doLink(path,cell);
 				}else // can't select
 					this.selectCell(cell);
 			}else{// not same or first select
@@ -260,6 +288,14 @@ var GridView = (function() {
 			
 			
 			
+		},
+		doLink:function(path,cell){
+			this.drawPath(path);
+			this.hidSelected(this.selectedCell,cell);
+
+			this.timeObj.time2 =5;
+			this.removeHighlightCells();
+			this.checkDeadLock();
 		},
 		drawPath:function(path){
 			
@@ -464,32 +500,43 @@ var GridView = (function() {
 		formJson:function(json){
 			
 		},
+		gameover:function(){
+			this.underlay.fadeIn("100").html("<div style='font-size:20px' >GAME OVER</div>");
+			this.destroy();
+		},
 		destroy:function(){
 			this.cleanTimer();
-			this.cleanOptions();
+			//this.cleanOptions();
+			delete this;
 		},
 		pause:function(){
 			this.pauseTimer();
 			 
 		},
 		goon:function(){
-			this.startTimer();
-			
+			//this.startTimer();
+			this.stop=false;
+			this.underlay.fadeOut("100");
 		},
 		startTimer:function(){
+			//this.cleanTimer();
+			this.stop  = false;
 			var timeStep = this.timeStep, step = timeStep/1000,_this = this;
 			var timerCtr = function(){
+				if(_this.stop)return;
 				if(_this.timeObj.time1<=0)_this.gameover();
 				_this.timeObj.time1-=step;
 				if(_this.timeObj.time2)_this.timeObj.time2-=step;
 				_this.timeObj.timerCallback();
 			};
+			// no need to use requestAnimationFrame()
 			this.timerId = setInterval(timerCtr,timeStep);
-			this.underlay.css("display","none");
+			this.underlay.fadeOut("100");
 		},
 		pauseTimer:function(){
-			this.underlay.css("display","block");
-			clearInterval(this.timerId);
+			this.underlay.fadeIn("100");
+			this.stop=true;
+			//clearInterval(this.timerId);
 			
 		},
 		cleanTimer:function(){
@@ -515,7 +562,7 @@ var GridView = (function() {
 var WordGridView = (function(_super){
 	__extends(WordGridView,_super);
 	function WordGridView(parent,opts){
-		_super.call(this,parent);
+		_super.call(this,parent,opts);
 		var wordsArray = opts.wordArray;
 		if(!wordsArray|| !wordsArray.length){
 			//alert("There is no words input!");
@@ -541,7 +588,7 @@ var WordGridView = (function(_super){
 
 		this.refreshGrid();
 		this.drawGrid();
-		_super.apply(this);
+		this.startTimer();
 	};
 	WordGridView.prototype.initWords=function(array){
 		var num = array.length;

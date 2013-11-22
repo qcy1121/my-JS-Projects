@@ -39,7 +39,7 @@ td img {
 	margin-left:70px;
 }
 #bar{
-	width:90%;
+	width:99%;
 	height:10px;
 	display:inline-flex;
 	margin-bottom:20px;
@@ -114,32 +114,37 @@ td img {
 .ui-button.ui-button-block{
 	display:block;
 	margin:20px 2px;
+	/* width:42px;
+	height:42px;
+	top:4px;
+	left:4px;
+	margin:0px; */
 }
-.ui-button.ui-widget.ui-button-icon-only .ui-icon{
+.ui-button.ui-widget.ui-button-icon-only .ui-icon.my-ui-icon{
 	width:42px;
 	height:42px;
 	top:4px;
 	left:4px;
 	margin:0px;
-}
-.ui-button .ui-icon.ui-icon-run-01{
+} 
+.ui-button .ui-icon.my-ui-icon-run-01{
 	background-image: url(../svg/run.svg);
 }
-.ui-button .ui-icon.ui-icon-hint-01{
+.ui-button .ui-icon.my-ui-icon-hint-01{
 	background-image: url(../svg/info.svg);
 }
 
-.ui-button .ui-icon.ui-icon-word-01{
-	background-image: url(../svg/run.svg);
+.ui-button .ui-icon.my-ui-icon-word-01{
+	background-image: url(../svg/word.svg);
 }
 
-.ui-button .ui-icon.ui-icon-refresh-01{
+.ui-button .ui-icon.my-ui-icon-refresh-01{
 	background-image: url(../svg/refresh.svg);
 }
-.ui-button .ui-icon.ui-icon-lock-01{
+.ui-button .ui-icon.my-ui-icon-lock-01{
 	background-image:url(../svg/lock.svg);
 }
-.ui-button .ui-icon.ui-icon-unlock-01{
+.ui-button .ui-icon.my-ui-icon-unlock-01{
 	background-image:url(../svg/unlock.svg);
 }
 
