@@ -27,6 +27,7 @@ td img {
 	  */
 }
 .outDiv{
+	width:100%;
 	
 }
 
@@ -36,7 +37,8 @@ td img {
 	float:left;
 }
 .barTable{
-	margin-left:70px;
+	/*margin-left:70px;*/
+	float:right;
 }
 #bar{
 	width:99%;
@@ -46,13 +48,13 @@ td img {
 }
 .ui-progressbar.timeBar{
 	
-	width:60%;
+	width:65%;
 	height:15px;
 	display:inline;
 }
 .ui-progressbar.awardBar{
 	
-	width:20%;
+	width:10%;
 	height:15px;
 	display:block;
 }

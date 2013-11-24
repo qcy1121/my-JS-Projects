@@ -9,14 +9,16 @@ require.config({
 	}
 });
 
-require(['jquery',"app/llk",'jui'], function( $,llk ) {
+require(['jquery',"app/llk",'jui','app/jutils'], function( $,llk ) {
 	
-	var gridView,  div =$("#tableDiv").addClass("tableDiv"), $out = $("#outDiv");
-	$out.css("display","block");
-	var width=$out.width(),height=$out.height();
-console.log(width+"  "+height);
+	var gridView,  $out = $("#outDiv");
 
-var maxtime =100,time,shorttime=3,islocked = false;;
+	var outWidth=$out.width(),outHeight=$out.height(),leftWidth =70,rightWidth = outWidth-leftWidth;
+	var div =$("#tableDiv").addClass("tableDiv").width(rightWidth);
+	
+//console.log(width+"  "+height);
+
+var maxtime =100,time,shorttime=3,islocked = false;
 var timeObj = {
 		maxtime:maxtime,
 		shorttime:shorttime,
@@ -35,32 +37,32 @@ var timeObj = {
 	var createOpts = function(){
 		var time = $.extend({},timeObj);
 		return {
-			timeObj:time
+			timeObj:time,
+			width:rightWidth,
+			level:1
 		};
 	} ;
 	var draw=function(){
 		if(gridView)gridView.destroy();
 		gridView = new llk.GridView(div,createOpts());
 		//gridView.setImgNum(10);
-		gridView.init();
+		gridView.render();
 		enableBtn();
 	};
 	var drawWords=function(){
 		if(gridView)gridView.destroy();
 		gridView = new llk.WordGridView(div,createOpts());
-		//gridView.setImgNum(10);
-		gridView.init();
+		gridView.render();
 		enableBtn();
 		//$("#refresh").attr("disabled",false).removeAttr("disabled");
 		//$("#hint").removeAttr("disabled");
 	};
 	var refresh= function(){
-		gridView.refreshGrid();
-		gridView.drawGrid();
+		gridView.refresh();
 	};
 	var hint = function(){
 		gridView.hint();
-		alert("aa");
+		
 	};
 	
 	var lock = function(){
@@ -94,18 +96,7 @@ var timeObj = {
 		$("#hint,#refresh").button("disable");
 	}
 	
-	var $dialog,$content,$okBtn,alertfunc=function(arg){
-		
-		if(!$dialog){
-			$okBtn=$("<div>").button({text:"OK"}).click(function(){$dialog.dialog("close");});
-			$content = $("<div>");
-			$dialog =$("<div id='dialog'></div>").append($content).append($okBtn);
-		}
-		$content.html(arg);
-		
-		$dialog.text(arg).dialog();
-	};
-	window.alert = alertfunc;
+	
 	show();
 });
 

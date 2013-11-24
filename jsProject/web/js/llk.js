@@ -16,10 +16,11 @@ var GridCell = (function() {
 })();
 
 var Cell = (function(){
-	function Cell(x, y,img ){
+	function Cell(x, y,img ,audio){
 		this.x = x;
 		this.y = y;
 		this.img = img;
+		this.audio = audio;
 		this.isHidden = false;
 	};
 	Cell.prototype = {
@@ -32,6 +33,7 @@ var Cell = (function(){
 			},
 			setJobj:function(){
 				this.jObj=$("<img src="+this.img+" class='imgCell' />");
+				
 			},
 			draw:function(){
 				this.setJobj();
@@ -39,9 +41,12 @@ var Cell = (function(){
 				var _this = this;
 				//this.click = 
 				cell.click(function(event){
+					_this.audio.flip.play();
 					_this.click(event,_this.view);
 				}); 
 				cell.css("visibility",this.isHidden?"hidden":"visible");
+
+				cell.on("mouseover",function(){_this.audio.beep.play();});
 				this.jObj = cell;
 				return cell;
 			}/*,
@@ -54,8 +59,8 @@ var Cell = (function(){
 })();
 var WordCell = (function(_super){
 	__extends(WordCell,_super);
-	function WordCell(i,j,img){
-		_super.call(this,i,j,img);
+	function WordCell(i,j,img,audio){
+		_super.call(this,i,j,img,audio);
 	};
 
 	WordCell.prototype.setJobj=function(){
@@ -64,6 +69,34 @@ var WordCell = (function(_super){
 
 	return WordCell;
 })(Cell);
+
+var resource = (function(){
+	var _resource = function(audio,images){
+		this._audio = audio?audio: {flip: '../audio/audio-flip.ogg',
+		        link:'../audio/audio-link.ogg',
+		        beep: '../audio/audio-beep.ogg'};
+		this._images =images?images:{
+			
+		};
+		this.audio ={},this.images = {};
+		
+	};
+	_resource.prototype.load = function(){
+		for(var idx in this._audio){
+			var audio = new Audio(this._audio[idx]);
+			this.audio[idx]=audio ;
+		}
+		for(var idx in this._images){
+			var image = new Image(this._images[idx]);
+			this.images[idx]= image;
+		}
+		this.audio.beep.volume=0.5;
+		return this;
+	};
+
+	return _resource;
+})();
+exports.resource = resource;
 
 // the grid
 var GridView = (function() {
@@ -78,75 +111,36 @@ var GridView = (function() {
 		this.allCount=0;
 		this.table=null;
 		this.tips=null;
-		this.xNum = opts.xNum ? opts.xNum : 10; // rows of view table
-		this.yNum =  opts.yNum ?  opts.yNum : 5; // columns of view table
-		if(this.xNum * this.yNum %2){
-			alert(" Wrong xNumber or yNumber");
-			this.xNum = 10;
-		}
-		this.imgNum=20;
-		this.cell_size = opts.cell_size?opts.cell_size:40; // size of square cell.
+		//this.cell_size = opts.cell_size?opts.cell_size:40; // size of square cell.
 		this.parentElement = parent;
 		this.timerId= null;
 		this.timeObj = opts.timeObj;
+		this.outwidth = opts.width;
 		// this.timeStart = Date.getTime() ; this.timeNow = ... // Using precise time
 		this.timeStep = 500;
 		this.underlay = null;
+		this.xNum =  10; // rows of view table
+		this.yNum =  5; // columns of view table
+		this.level = 1;
+		this.baseNum =10;
+		this.imgNum=this.level*2+this.baseNum;
 		this.stop=false;
-		//this.parent = parent,
-		//this.opts = opts;
-		//this.initialize(parent,opts);
+		this.zoom=1;
+		
+		this.resource = opts.resource?opts.resource:(new resource()).load();
 	};
+
+	
 	GridView.prototype = {
-		/*initialize : function(parent,opts){
+		calculateLevel:function(level){
+			/*this.level = level?level:1;
 			this.xNum = opts.xNum ? opts.xNum : 10; // rows of view table
 			this.yNum =  opts.yNum ?  opts.yNum : 5; // columns of view table
 			if(this.xNum * this.yNum %2){
 				alert(" Wrong xNumber or yNumber");
 				this.xNum = 10;
 			}
-
-			this.grid = null;
-			this.cells=null;
-			this.imgs=null;
-			this.imgMap=null;
-			this.basePath="./";
-			this.selectedCell=null;
-			this.hidCount=0;
-			this.allCount=0;
-			this.table=null;
-			this.tips=null;
-			this.imgNum=20;
-			this.cell_size = opts.cell_size?opts.cell_size:40; // size of square cell.
-			this.parentElement = parent;
-			this.timerId= null;
-			this.timeObj = opts.timeObj;
-			// this.timeStart = Date.getTime() ; this.timeNow = ... // Using precise time
-			this.timeStep = 500;
-			this.underlay = null;
-			this.stop=false;
-		},*/
-		zoomX:{
-		        set: function(zoom){
-		        	return this.setZoomX();
-		        },
-		        enumerable: true,
-		        configurable: true
-		},
-		zoomY:{
-			 
-		        set: function(zoom){
-		        	return this.setZoomY(zoom);
-		        },
-		        enumerable: true,
-		        configurable: true
-		},
-		setZoomX:function(x){
-			
-		},
-		
-		setZoomY:function(y){
-			
+			this.imgNum=20;*/
 		},
 		setImgNum:function(num){
 			this.imgNum = num;
@@ -174,7 +168,7 @@ var GridView = (function() {
 			}
 		},
 		createNewCell:function(i,j,img){
-			return new Cell(i,j,img);
+			return new Cell(i,j,img,this.resource.audio);
 		},
 		pushToImgMap:function(img,cell){
 			var imgCells = this.imgMap.get(img);
@@ -187,7 +181,7 @@ var GridView = (function() {
 		},
 		getRandomImg:function(isSort){
 			var imgNum = this.imgMap.size;
-			if(imgNum== this.imgNum && this.imgs.length>imgNum){
+			if(imgNum == this.imgNum && this.imgs.length>imgNum){
 				this.imgs = this.imgs.slice(0,imgNum);
 			}
 			if(!isSort){
@@ -246,9 +240,9 @@ var GridView = (function() {
 			gridCell.cell = newCell;
 		},
 		
-		checkValue : function(){
-			
-			
+		refresh:function(){
+			this.refreshGrid();
+			this.drawGrid();
 		},
 		drawGrid:function(){
 			//this.underlay.destory();
@@ -268,9 +262,27 @@ var GridView = (function() {
 			//this.parentElement.append(table);
 
 			table.appendTo(this.parentElement);
-			if(!this.underlay)this.underlay = $("<div>").addClass("underlay").css({width:table.width(),height:table.height(),position:"absolute",top:"0px",left:"0px"}).appendTo(this.parentElement);
-			else this.underlay.appendTo(this.parentElement);
+			if(!this.underlay)this.underlay = $("<div>").addClass("underlay");
+			else this.underlay.css({width:table.width(),height:table.height(),position:"absolute",top:"0px",left:"0px"}).appendTo(this.parentElement);
 			this.table = table;
+			this.changeZoom();
+		},
+		changeZoom :function(){
+			var width = this.table.width(),
+			zoom = this.outwidth/width;
+			this.setZoom(zoom);
+		},
+		setZoom:function(zoom){
+			var css ;
+			if(typeof zoom == "object"){
+				var x = zoom.x,y=zoom.y;
+				css = {"-webkit-transform": "scale("+x+","+y+")", "-ms-transform": "scale("+x+","+y+")","transform": "scale("+x+","+y+")"};
+				
+			}else{
+				css = {"zoom":zoom};
+			}
+			this.table.css(css);
+			this.underlay.css(css);
 		},
 		onClick:function(cell/*cell*/){
 			//TODO
@@ -293,12 +305,12 @@ var GridView = (function() {
 			this.drawPath(path);
 			this.hidSelected(this.selectedCell,cell);
 
-			this.timeObj.time2 =5;
+			this.timeObj.time2 =this.timeObj.shorttime;
 			this.removeHighlightCells();
 			this.checkDeadLock();
 		},
 		drawPath:function(path){
-			
+			this.resource.audio.link.play();
 			
 		},
 		findPath:function(cell1,cell2){
@@ -404,14 +416,23 @@ var GridView = (function() {
 			this.selectedCell = cell;
 			if(cell)this.selectedCell.jObj.addClass("selected");
 		},
-		init : function() {
-			var path = this.basePath+"../images";
-			this.initImgs(path,31);
+		render : function(level) {
+			this.level = level?level:1;
+			this.calculateLevel();
+			this.selfInit();
 			this.initGridArray();
-			
 			this.refreshGrid();
 			this.drawGrid();
-			this.startTimer();
+			this.initTimer();
+		},
+		renderHighLevel:function(){
+			var level = this.level+1;
+			this.render(level);
+		},
+
+		selfInit:function(){
+			var path = this.basePath+"../images";
+			this.initImgs(path,31);
 		},
 		initTimer:function(){
 			this.cleanTimer();
@@ -437,7 +458,7 @@ var GridView = (function() {
 				this.highlightCell(cells);
 			}else{
 				if(this.hidCount ==this.allCount){
-				this.init();
+				this.renderHighLevel();
 				}else{
 					this.refreshGrid();
 					this.drawGrid();
@@ -524,9 +545,13 @@ var GridView = (function() {
 			var timeStep = this.timeStep, step = timeStep/1000,_this = this;
 			var timerCtr = function(){
 				if(_this.stop)return;
-				if(_this.timeObj.time1<=0)_this.gameover();
-				_this.timeObj.time1-=step;
-				if(_this.timeObj.time2)_this.timeObj.time2-=step;
+				if(_this.timeObj.time1<=0){_this.gameover();return;}
+				if(_this.timeObj.time2){
+					_this.timeObj.time2-=step;
+				}else{
+
+					_this.timeObj.time1-=step;
+				}
 				_this.timeObj.timerCallback();
 			};
 			// no need to use requestAnimationFrame()
@@ -580,15 +605,11 @@ var WordGridView = (function(_super){
 		this.wordsArray  = wordsArray;
 	}
 	WordGridView.prototype.createNewCell=function(i,j,img){
-		return new WordCell(i,j,img);
+		return new WordCell(i,j,img,this.resource.audio);
 	},
-	WordGridView.prototype.init=function(){
+	WordGridView.prototype.selfInit=function(){
 		this.initWords(this.wordsArray);
-		this.initGridArray();
-
-		this.refreshGrid();
-		this.drawGrid();
-		this.startTimer();
+	
 	};
 	WordGridView.prototype.initWords=function(array){
 		var num = array.length;
@@ -602,22 +623,6 @@ var WordGridView = (function(_super){
 })(GridView);
 
 
-
-// GridViewCtrl the outer grid and control
-var GridViewCtrl = (function(){
-	function GridViewCtrl(gridView/*GridView*/){
-
-		this.vWidth = 600;// width of view
-		this.vHeight = 400; // height of view
-	};
-	GridViewCtrl.prototype = {
-			gridView:null,
-			setGridView :function(gridView){
-				this.gridView = gridView;
-			}
-	};
-	return GridViewCtrl;
-})();
 exports.GridView = GridView;
 exports.WordGridView = WordGridView;
 });
