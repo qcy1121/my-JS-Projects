@@ -28,27 +28,30 @@ var Cell = (function(){
 			onclick:null,
 			jObj:null,
 			view:null,//for click 
-			click:function(event){
-				this.view.onClick(this);
+			click:function(event,view){
+				view.onClick(this);
+			},
+			addEvent:function(){
+				var cell  = this.jObj,_this = this;
+				cell.click(function(event){
+					_this.audio.flip.play();
+					_this.click(event,_this.view);
+				}); 
+
+				cell.on("mouseover",function(){_this.audio.beep.play();});
 			},
 			setJobj:function(){
 				this.jObj=$("<img src="+this.img+" class='imgCell' />");
 				
 			},
 			draw:function(){
-				this.setJobj();
-				var cell = this.jObj;
-				var _this = this;
-				//this.click = 
-				cell.click(function(event){
-					_this.audio.flip.play();
-					_this.click(event,_this.view);
-				}); 
-				cell.css("visibility",this.isHidden?"hidden":"visible");
-
-				cell.on("mouseover",function(){_this.audio.beep.play();});
-				this.jObj = cell;
-				return cell;
+				if(!this.jObj){
+					this.setJobj();
+				}
+				this.addEvent();
+				this.jObj.css("visibility",this.isHidden?"hidden":"visible");
+			
+				return this.jObj;
 			}/*,
 			toHtml:function(){
 				return "<img src="+this.img+"  class='imgCell' style='display:block' />";
@@ -113,6 +116,7 @@ var GridView = (function() {
 		this.tips=null;
 		//this.cell_size = opts.cell_size?opts.cell_size:40; // size of square cell.
 		this.parentElement = parent;
+		parent.empty();
 		this.timerId= null;
 		this.timeObj = opts.timeObj;
 		this.outwidth = opts.width;
@@ -122,29 +126,45 @@ var GridView = (function() {
 		this.xNum =  10; // rows of view table
 		this.yNum =  5; // columns of view table
 		this.level = 1;
+		this.bigLevel = 0;
 		this.baseNum =10;
 		this.imgNum=this.level*2+this.baseNum;
 		this.stop=false;
 		this.zoom=1;
-		
+		this.over = false;
 		this.resource = opts.resource?opts.resource:(new resource()).load();
+		this.levels = [
+						{y:6,x:6},
+						{y:6,x:7},
+						{y:6,x:8},
+						{y:6,x:9},
+						/*{y:6,x:10},
+						{y:6,x:11},
+						{y:6,x:12},
+						{y:6,x:13},
+						{y:6,x:14},
+						{y:7,x:13},
+						{y:7,x:14},
+	        			{y:7,x:15},*/
+	        	            ];
 	};
-
+	
+	
 	
 	GridView.prototype = {
-		calculateLevel:function(level){
-			/*this.level = level?level:1;
-			this.xNum = opts.xNum ? opts.xNum : 10; // rows of view table
-			this.yNum =  opts.yNum ?  opts.yNum : 5; // columns of view table
-			if(this.xNum * this.yNum %2){
+		calculateLevel:function(){
+			var levelVal = this.levels[this.level-1];
+			this.xNum = levelVal.x; // rows of view table
+			this.yNum =  levelVal.y; // columns of view table
+			/*if(this.xNum * this.yNum %2){
 				alert(" Wrong xNumber or yNumber");
 				this.xNum = 10;
-			}
-			this.imgNum=20;*/
+			}*/
+			this.imgNum=this.xNum*this.yNum /2;
 		},
-		setImgNum:function(num){
+		/*setImgNum:function(num){
 			this.imgNum = num;
-		},
+		},*/
 		initGridArray : function() {
 			this.gridCells = [];
 			this.cells = [];
@@ -241,13 +261,21 @@ var GridView = (function() {
 		},
 		
 		refresh:function(){
+			if(this.isOver())return ;
 			this.refreshGrid();
 			this.drawGrid();
 		},
 		drawGrid:function(){
 			//this.underlay.destory();
-			this.parentElement.empty();
-			var table = $("<table id='gridTable' class='gridTable'></table>"),col,cell;
+			//this.parentElement.empty();
+			var table = this.table,col,cell,underlay = this.underlay;
+			if(!table){
+				table = $("<table id='gridTable' class='gridTable'></table>");
+				underlay =$("<div>").addClass("underlay");
+				table.appendTo(this.parentElement);
+				underlay.appendTo(this.parentElement);
+			}
+			table.empty();
 			for(var i=0;i<this.yNum;i++){
 				col = $("<tr></tr>");
 				col.appendTo(table);
@@ -259,13 +287,12 @@ var GridView = (function() {
 					td.appendTo(col);
 				}
 			}
-			//this.parentElement.append(table);
 
-			table.appendTo(this.parentElement);
-			if(!this.underlay)this.underlay = $("<div>").addClass("underlay");
-			else this.underlay.css({width:table.width(),height:table.height(),position:"absolute",top:"0px",left:"0px"}).appendTo(this.parentElement);
+			underlay.css({width:table.width(),height:table.height(),position:"absolute",top:"0px",left:"0px"}).fadeOut("100");
+
+			this.underlay = underlay;
 			this.table = table;
-			this.changeZoom();
+			//this.changeZoom();
 		},
 		changeZoom :function(){
 			var width = this.table.width(),
@@ -307,6 +334,7 @@ var GridView = (function() {
 
 			this.timeObj.time2 =this.timeObj.shorttime;
 			this.removeHighlightCells();
+			if(this.bigLevel)this.refresh();
 			this.checkDeadLock();
 		},
 		drawPath:function(path){
@@ -426,8 +454,13 @@ var GridView = (function() {
 			this.initTimer();
 		},
 		renderHighLevel:function(){
-			var level = this.level+1;
-			this.render(level);
+			if(this.level>this.levels.length){
+				this.level = 1;
+				this.bigLevel = 2;
+			}else{ 
+				this.level++;
+			}
+			this.render(this.level);
 		},
 
 		selfInit:function(){
@@ -448,6 +481,7 @@ var GridView = (function() {
 			}
 		},
 		hint:function(){
+			if(this.isOver())return ;
 			if(this.tips){
 				this.highlightCell(this.tips);
 				return;
@@ -469,7 +503,7 @@ var GridView = (function() {
 			var cell, imgCells, img;
 			if(this.hidCount == this.allCount){
 				alert("Good Job!");
-				this.init();
+				this.renderHighLevel();
 				return;
 			}
 			for ( var idx in this.cells) {
@@ -522,20 +556,25 @@ var GridView = (function() {
 			
 		},
 		gameover:function(){
+			
 			this.underlay.fadeIn("100").html("<div style='font-size:20px' >GAME OVER</div>");
 			this.destroy();
 		},
 		destroy:function(){
+			this.over = true;
 			this.cleanTimer();
 			//this.cleanOptions();
 			delete this;
 		},
 		pause:function(){
+
+			this.underlay.fadeIn("100");
 			this.pauseTimer();
 			 
 		},
 		goon:function(){
 			//this.startTimer();
+			if(this.isOver())return;
 			this.stop=false;
 			this.underlay.fadeOut("100");
 		},
@@ -556,16 +595,21 @@ var GridView = (function() {
 			};
 			// no need to use requestAnimationFrame()
 			this.timerId = setInterval(timerCtr,timeStep);
-			this.underlay.fadeOut("100");
 		},
 		pauseTimer:function(){
-			this.underlay.fadeIn("100");
 			this.stop=true;
 			//clearInterval(this.timerId);
 			
 		},
 		cleanTimer:function(){
 			clearInterval(this.timerId);
+		},
+		isOver:function(){
+			if(this.over){
+				alert("GAME OVER!");
+				return true;
+			}
+			return false;
 		}
 		
 		

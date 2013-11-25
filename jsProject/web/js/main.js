@@ -18,21 +18,21 @@ require(['jquery',"app/llk",'jui','app/jutils'], function( $,llk ) {
 	
 //console.log(width+"  "+height);
 
-var maxtime =100,time,shorttime=3,islocked = false;
+var maxtime =100,time,shorttime=3,islocked = false,timerCallback = function(){
+	$("#timeBar").progressbar("value",this.time1);
+	$("#awardBar").progressbar("value",this.time2);
+	$("#links").text(this.time2);
+	$("#timeleft").text(this.time1);
+	if(this.time1<=10){
+		//$("timeBar").toggleClass("red");
+	}
+};
 var timeObj = {
 		maxtime:maxtime,
 		shorttime:shorttime,
 		time1:maxtime,
 		time2:0,
-		timerCallback : function(){
-			$("#timeBar").progressbar("value",this.time1);
-			$("#awardBar").progressbar("value",this.time2);
-			$("#links").text(this.time2);
-			$("#timeleft").text(this.time1);
-			if(this.time1<=10){
-				//$("timeBar").toggleClass("red");
-			}
-		}
+		timerCallback : timerCallback
 	};
 	var createOpts = function(){
 		var time = $.extend({},timeObj);
@@ -96,7 +96,9 @@ var timeObj = {
 		$("#hint,#refresh").button("disable");
 	}
 	
+	$(document).ready(function(){
+		show();
+	});
 	
-	show();
 });
 
