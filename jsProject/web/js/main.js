@@ -22,7 +22,7 @@ require.config({
 	    //console.log(width+"  "+height);
 
 	    var maxtime = 100,
-	    	storage = new data.StorageApi(),
+	    	storage = new data.StorageApi()||{},
 	        time, shorttime = 3,
 	        islocked = false,
 	        timerCallback = function () {
@@ -73,8 +73,9 @@ require.config({
 	        gridView.refresh();
 	    };
 	    var hint = function () {
-	    	jconfirm("使用提示吗？",function(res){
-	    		if(res)gridView.hint();
+	    	var str= "hintCount",i = storage.getItem(str),i=i?i:0;
+	    	jconfirm("一共使用了"+ i +"次提示，继续使用提示吗？",function(res){
+	    		if(res){gridView.hint();storage.setItem(str,++i);}
 	    	});
 	       // gridView.hint();
 

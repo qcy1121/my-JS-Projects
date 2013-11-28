@@ -446,7 +446,7 @@ var GridView = (function() {
 			if(cell)this.selectedCell.jObj.addClass("selected");
 		},
 		render : function(level) {
-			this.level = level?level:1;
+			this.level = level?level:this.level;
 			this.calculateLevel();
 			this.selfInit();
 			this.initGridArray();

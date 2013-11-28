@@ -12,6 +12,8 @@ define(["exports","jquery"],function(exports,$){
 	var StorageApi = (function(){
 		function StorageApi(storage){
 			this.storage = storage?storage:localStorage;
+			
+			if(!this.storage){ alert("not suport"); return null;}
 			//this.storage = isSession?sessionStorage:localStorage;
 		}
 		StorageApi.prototype = {
