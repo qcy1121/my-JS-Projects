@@ -37,8 +37,8 @@ td img {
 	float:left;
 }
 .barTable{
-	/*margin-left:70px;*/
-	float:right;
+	margin-left:70px;
+	/* float:right; */
 }
 #bar{
 	width:99%;

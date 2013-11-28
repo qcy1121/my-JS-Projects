@@ -120,12 +120,13 @@ var GridView = (function() {
 		this.timerId= null;
 		this.timeObj = opts.timeObj;
 		this.outwidth = opts.width;
+		this.levelUpCallback = opts.levelUpCallback;
 		// this.timeStart = Date.getTime() ; this.timeNow = ... // Using precise time
 		this.timeStep = 500;
 		this.underlay = null;
 		this.xNum =  10; // rows of view table
 		this.yNum =  5; // columns of view table
-		this.level = 1;
+		this.level = opts.level?opts.level:1;
 		this.bigLevel = 0;
 		this.baseNum =10;
 		this.imgNum=this.level*2+this.baseNum;
@@ -160,7 +161,7 @@ var GridView = (function() {
 				alert(" Wrong xNumber or yNumber");
 				this.xNum = 10;
 			}*/
-			this.imgNum=this.xNum*this.yNum /2;
+			this.imgNum=this.level*2+this.baseNum;
 		},
 		/*setImgNum:function(num){
 			this.imgNum = num;
@@ -460,6 +461,10 @@ var GridView = (function() {
 			}else{ 
 				this.level++;
 			}
+			//TODO the level and bigLevel need use one argument
+			
+			
+			if(this.levelUpCallback)this.levelUpCallback(this.level);
 			this.render(this.level);
 		},
 
