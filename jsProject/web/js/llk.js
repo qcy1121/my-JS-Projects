@@ -52,7 +52,13 @@ var Cell = (function(){
 				this.jObj.css("visibility",this.isHidden?"hidden":"visible");
 			
 				return this.jObj;
-			}/*,
+			},
+			equals:function(cell){
+				return cell && this.img === cell.img;
+			}
+			
+			
+			/*,
 			toHtml:function(){
 				return "<img src="+this.img+"  class='imgCell' style='display:block' />";
 			}*/
@@ -316,7 +322,7 @@ var GridView = (function() {
 			//TODO
 			if(cell.isHidden) return;
 			
-			if(this.selectedCell && (this.selectedCell.img == cell.img) && (this.selectedCell != cell)){
+			if(this.selectedCell && (this.selectedCell.equals(cell)) && (this.selectedCell != cell)){
 				var path = this.findPath(this.selectedCell,cell);
 				if(path){
 					this.doLink(path,cell);
