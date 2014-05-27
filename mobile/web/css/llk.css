@@ -1,0 +1,155 @@
+table {
+	border-collapse: collapse;
+	background-color: black;
+	border-radius: 10px;
+}
+
+td {
+	/*
+	border: solid #ccc 1px;
+	
+	height: 36px;
+	width: 36px;
+	*/
+	cursor: pointer;
+	padding: 2px;
+}
+
+td img {
+	height: 36px;
+	width: 36px;
+	/*
+	border: solid #fff 3px;
+	
+	  filter: alpha(opacity=80);
+	  -moz-opacity: 0.8;
+	  opacity: 0.8;
+	  */
+}
+.outDiv{
+	width:100%;
+	
+}
+
+.myButtonDiv {
+	padding:0px 8px;
+	margin-top:20px;
+	float:left;
+}
+.barTable{
+	margin-left:70px;
+	/* float:right; */
+}
+#bar{
+	width:99%;
+	height:10px;
+	display:inline-flex;
+	margin-bottom:20px;
+}
+.ui-progressbar.timeBar{
+	
+	width:65%;
+	height:15px;
+	display:inline;
+}
+.ui-progressbar.awardBar{
+	
+	width:10%;
+	height:15px;
+	display:block;
+}
+.tableDiv{
+	position:relative;
+}
+.underlay{
+	background: gray;
+	z-index:100;
+}
+.imgCell {
+	border-radius: 11px;
+	/*border-top: 1px solid #575456;*/
+	background: #7b7f82;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc),
+		to(#7b7f82));
+	background: -webkit-linear-gradient(top, #fcfcfc, #7b7f82);
+	background: -moz-linear-gradient(top, #fcfcfc, #7b7f82);
+	background: -ms-linear-gradient(top, #fcfcfc, #7b7f82);
+	background: -o-linear-gradient(top, #fcfcfc, #7b7f82);
+	padding: 3px;
+	-webkit-border-radius: 11px;
+	-moz-border-radius: 11px;
+	border-radius: 11px;
+	-webkit-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	-moz-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	text-shadow: rgba(0, 0, 0, .4) 0 1px 0;
+	color: darkgreen; /*purple;*/
+	font-size: 36px;
+	font-family: \534E\6587\7425\73C0; /* »ªÎÄçúçê */ /* Georgia, serif;*/
+	text-decoration: none;
+	vertical-align: middle;
+}    
+
+.imgCell:hover {
+	border-top-color: #686969;
+	background: #686969;
+	color: #ccc;
+}
+/*
+.imgCell:active {
+	border-top-color: #1b435e;
+	background: #1b435e;
+}
+*/
+.selected {
+	filter: Gray;
+	border: 1px solid;
+	padding: 2px;
+	border-color: yellow;
+	background-color: #1b435e;
+}
+
+.highlight {
+	background: yellow;
+}
+/* icon start */
+.ui-button.ui-button-block{
+	display:block;
+	margin:20px 2px;
+	/* width:42px;
+	height:42px;
+	top:4px;
+	left:4px;
+	margin:0px; */
+}
+.ui-button.ui-widget.ui-button-icon-only .ui-icon.my-ui-icon{
+	width:42px;
+	height:42px;
+	top:4px;
+	left:4px;
+	margin:0px;
+} 
+.ui-button .ui-icon.my-ui-icon-run-01{
+	background-image: url(../svg/run.svg);
+}
+.ui-button .ui-icon.my-ui-icon-hint-01{
+	background-image: url(../svg/info.svg);
+}
+
+.ui-button .ui-icon.my-ui-icon-word-01{
+	background-image: url(../svg/word.svg);
+}
+
+.ui-button .ui-icon.my-ui-icon-refresh-01{
+	background-image: url(../svg/refresh.svg);
+}
+.ui-button .ui-icon.my-ui-icon-lock-01{
+	background-image:url(../svg/lock.svg);
+}
+.ui-button .ui-icon.my-ui-icon-unlock-01{
+	background-image:url(../svg/unlock.svg);
+}
+
+
+
+/*icon end */

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html manifest="llk.appcache">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>连连看 javaScript 版</title>
+<script src="../lib/require.js" data-main="../js/main"></script>
+<link rel="stylesheet" href="../css/llk.css"/>
+<link rel ="stylesheet" href="../lib/jquery-ui.css"/>
+</head>
+<body>
+
+<div id="outDiv" style="outDiv" >
+<div id="myButtonDiv" class="myButtonDiv">
+<div id="draw" title="图片">图</div>
+<div id="drawWords" title="文字">字</div>
+<div id="lock" title="暂停">停</div>
+<div id="refresh" title="刷新">刷</div>
+<div id="hint" title="提示" >提</div>
+</div>
+<div class="barTable">
+<div id="bar">
+<label>总时间 : </label><label style="width:30px;" id="timeleft"></label><div id="timeBar" ></div>
+<label>连击 : </label><label style="width:25px;" id="links" > </label><div id="awardBar"></div>
+</div>
+
+<div id="tableDiv" ></div>
+</div>
+<div id="setting">
+
+</div>
+</div>
+<div id="mobile" style="display:none">
+
+</div>
+</body>
+</html>
