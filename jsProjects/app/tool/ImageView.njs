@@ -51,6 +51,7 @@ function savefile(arr) {
     fs.writeFile('data.js',  JSON.stringify(arr), function (e) {
         if (e)console.error(e);
     });
+    //fs.read
 }
 function read(path) {
     var obj = {};
