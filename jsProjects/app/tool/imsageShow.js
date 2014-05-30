@@ -1,7 +1,7 @@
 ﻿(function($){
 	$.fn.imageLazyLoading= function(options){
 		var self = $(this);
-		var opts = $.extendd({
+		var opts = $.extend({
 			container:$(window),
 			data:null,
 			dataUrl:'data-url',
@@ -13,7 +13,7 @@
 			var data = [];
 			$(this).each(function(){
 			var obj = $(this);
-				if(obj.nodeName.toLowerCase()=="img"){
+				if(obj[0].nodeName.toLowerCase()=="img"){
 				data.push({
 					url:obj.attr(opts.dataUrl),
 					obj :obj//,
@@ -23,7 +23,7 @@
 			});
 			opts.data=data;
 		}else{
-			$.each(data,function(i,e){
+			$.each(opts.data,function(i,e){
 				var obj = $("<img>");
 				obj.attr("src",opts.noLoadedImg);
 				//obj.addClass(opts.noLoadedImg);
@@ -33,23 +33,25 @@
 		}
 		var cter = opts.container;
 		var lazyLoading = function(){
-			$.each(data,function(i,e){
+			$.each(opts.data,function(i,e){
 				var obj = e.obj,
 				url = e.url;
-				if(!obj.updated){
+				if(!e.updated){
 					var height = cter.height(),
 					scrollTop = cter.scrollTop(),
 					selfTop = obj.offset().top;
-					if((selfTop-scrollTop)>0&&(selfTop-scrolltop)<height){
-						obj.fadeIn(0);
+                    //todo need check the scroll
+                    console.log(selfTop+"  "+scrollTop+"  "+selfTop+"   "+scrollTop+"   "+height);
+					if((selfTop-scrollTop)>0&&(selfTop-scrollTop)<height){
+						obj.fadeIn(10);
 						obj.attr("src",url);
-						obj.updated = true;
+						e.updated = true;
 					}
 				}
 			});
 			
 		}
-		cter.bind("scroll",lazyLoading);
+		cter.on("scroll",lazyLoading);
 		lazyLoading();
 	};
 })(jQuery)

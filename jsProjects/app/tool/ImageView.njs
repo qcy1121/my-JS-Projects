@@ -5,7 +5,7 @@ function readDir(path, obj, callback) {
 
     fs.readdir(path, function (err, files) {
         if (err)console.log(err);
-        obj.array.push({name: path, path: path, type: 'path'});
+        //obj.array.push({name: path, path: path, type: 'path'});
         var paths = [];
         for (var i in files) {
             var f = files[i], p = path + "/" + f, file = fs.lstatSync(p);
@@ -27,8 +27,8 @@ function readDir(path, obj, callback) {
                 //console.log(paths[i]);
                 readDir(paths[i], obj, function () {
                     hooks.push(1);
-                    if (hooks.length == paths.length) {
-                        if (callback)callback();
+                    if (hooks.length == paths.length &&callback) {
+                        callback();
                     }
                 });
             }
@@ -41,24 +41,26 @@ function readDir(path, obj, callback) {
 function readFile(file, path, obj) {
     var reg = /.JPG/i;
     if (reg.test(file)) {
-        var a = {name: file, path: (path + '/' + file), type: 'image'};
+        var a = {name: file, url: (path + '/' + file), type: 'image'};
         //console.log(file);
-        obj.array.push(a);
+        var arr = obj[path];
+        if(!arr)arr=obj[path]=[];
+        arr.push(a);
+
     }
 };
-function savefile(arr) {
+function saveFile(obj) {
 
-    fs.writeFile('data.js',  JSON.stringify(arr), function (e) {
+    fs.writeFile('data.js', 'var data='+ JSON.stringify(obj), function (e) {
         if (e)console.error(e);
     });
     //fs.read
 }
 function read(path) {
     var obj = {};
-    obj.array = [];
     var cb = function () {
         //console.log(content.length);
-        savefile(obj.array);
+        saveFile(obj);
     };
     readDir(path, obj, cb);
 }
