@@ -32,17 +32,20 @@
 			});
 		}
 		var cter = opts.container;
+        var isNeedUpdate=function(obj){
+            var height = cter.height(),
+                scrollTop = cter.scrollTop(),
+                selfTop = obj.offset().top;
+            //todo need check the scroll
+            console.log(selfTop+"  "+scrollTop+"  "+selfTop+"   "+scrollTop+"   "+height);
+            return ((selfTop-scrollTop)>0&&(selfTop-scrollTop)<height)
+        };
 		var lazyLoading = function(){
 			$.each(opts.data,function(i,e){
 				var obj = e.obj,
 				url = e.url;
 				if(!e.updated){
-					var height = cter.height(),
-					scrollTop = cter.scrollTop(),
-					selfTop = obj.offset().top;
-                    //todo need check the scroll
-                    console.log(selfTop+"  "+scrollTop+"  "+selfTop+"   "+scrollTop+"   "+height);
-					if((selfTop-scrollTop)>0&&(selfTop-scrollTop)<height){
+					if(isNeedUpdate(obj)){
 						obj.fadeIn(10);
 						obj.attr("src",url);
 						e.updated = true;
