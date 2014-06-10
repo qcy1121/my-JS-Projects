@@ -38,20 +38,28 @@
             });
             opts.data=data;
         }else{
-            $.each(opts.data,function(i,e){
+           for(var i in opts.data){
+               var e = opts.data[i];
+           // / $.each(opts.data,function(i,e){
                 if(!e)return;
                 var obj = $("<img>");
-                obj.attr("src",opts.noLoadedImg);
+
                 //obj.addClass(opts.noLoadedImg);
                 e.obj = obj;
-                self.append(obj);
-            });
+                if(opts.addFun){
+                    opts.addFun(self,e);
+                }else{
+                    self.append(obj);
+                }
+               //obj.attr("src",opts.noLoadedImg);
+               obj.attr("src", e.url);
+            };
         }
         return opts;
     }
 	$.fn.imageLazyLoading= function(options){
 		var self = $(this);
-		var opts=prepareOptions(self,options);
+        var opts=prepareOptions(self,options);
 		var cter = opts.container,cterRect;
         var isNeedUpdate=function(obj){
             var rect = obj.getRect();
@@ -95,13 +103,32 @@
 		cter.on("resize",checkLoading);
 		lazyLoading();
 	};
-    $.fn.newGalleryView=function(){
-
-
-    };
-    $.fn.useGalleryView=function(options){
+    $.fn.usePhotoBox=function(options){
         var self = $(this);
+        options.addFun = function(parent,e){
+            var path = options.getCompressdPath();
+            var a= $("<a></a>");
+            a.attr("href",e.url);
+            e.url = path+"/"+ e.name;
+            parent.append(a.append(e.obj));
+        }
         var opts = prepareOptions(self,options)
-        opts.container.galleryView();
+        //self.imageLazyLoading(opts);
+        self.photobox('a',{ time:0 });
+
+        // using a callback and a fancier selector
+        //----------------------------------------------
+        //self.photobox('li > a.family', { time: 0 }), function() {
+        //    console.log('image has been loaded');
+        //}
+        //)
+
+        // destroy the plugin on a certain gallery:
+        //-----------------------------------------------
+        //self.photobox('destroy');
+
+        // re-initialize the photbox DOM (does what Document ready does)
+        //-----------------------------------------------
+       // self.photobox('prepareDOM');
     }
 })(jQuery)
