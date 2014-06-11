@@ -23,38 +23,26 @@
             fadeIn:0,
             noLoadedImg:'noLoadedImg.jpg'
         },options||{});
-        if(!opts.data){
-            //if(opts.data-url)
-            var data = [];
-            $(this).each(function(){
-                var obj = $(this);
-                if(obj[0].nodeName.toLowerCase()=="img"){
-                    data.push({
-                        url:obj.attr(opts.dataUrl),
-                        obj :obj//,
-                        //updated:false;
-                    });
-                }
-            });
-            opts.data=data;
-        }else{
-           for(var i in opts.data){
-               var e = opts.data[i];
-           // / $.each(opts.data,function(i,e){
-                if(!e)return;
-                var obj = $("<img>");
+        var imageListClass = opts.imageListClass;
+        for (var i in opts.data) {
+            var e = opts.data[i];
+            // / $.each(opts.data,function(i,e){
+            if (!e)return;
+            var obj = $("<img>");
 
-                //obj.addClass(opts.noLoadedImg);
-                e.obj = obj;
-                if(opts.addFun){
-                    opts.addFun(self,e);
-                }else{
-                    self.append(obj);
-                }
-               //obj.attr("src",opts.noLoadedImg);
-               obj.attr("src", e.url);
-            };
+            //obj.addClass(opts.noLoadedImg);
+            e.obj = obj;
+            if (opts.addFun) {
+                opts.addFun(self, e);
+            } else {
+                self.append(obj);
+            }
+            //obj.attr("src",opts.noLoadedImg);
+            obj.attr("src", e.url);
+            if (imageListClass)obj.addClass(imageListClass);
         }
+        ;
+
         return opts;
     }
 	$.fn.imageLazyLoading= function(options){
@@ -103,6 +91,7 @@
 		cter.on("resize",checkLoading);
 		lazyLoading();
 	};
+
     $.fn.usePhotoBox=function(options){
         var self = $(this);
         options.addFun = function(parent,e){
@@ -130,5 +119,11 @@
         // re-initialize the photbox DOM (does what Document ready does)
         //-----------------------------------------------
        // self.photobox('prepareDOM');
+    }
+    $.fn.removePhotoBox=function(){
+        $(this).photobox('destroy');
+    }
+    $.fn.cleanImageShow=function(){
+
     }
 })(jQuery)

@@ -13,13 +13,18 @@
     <script type="text/javascript" src="./imsageShow.js"></script>
 
     <script src="data.js" ></script>
+    <style>
+        .imageList{
+            width:100px;height:80px;border-radius:10px;border:2px;
+        }
+    </style>
 </head>
 <body>
 <div id="selectDiv"  style="display:inline-flex"></div>
-<div id="showDiv" style="width:90%;height:90%;overflow: auto;">
-    <ul id="myGallery">
+<div id="showDiv" style="width:90%;height:90%;overflow: scroll;">
+    <div id="myGallery">
 
-    </ul>
+    </div>
 </div>
 <script>
     var dd,div=$("#selectDiv");
@@ -41,7 +46,7 @@
     getOpts=function(i){
         var path ;
         var opt = {
-            container:$("#myGallery"),
+            container:$("#showDiv"),
             data:i===undefined||i===null ?data:data[i],
             getCompressdPath:function(i){
 
@@ -51,7 +56,8 @@
                 ps.splice(2,0,"compressed");
                 path= ps.join("/");
                 return path;
-            }
+            },
+            imageListClass:"imageList"
         };
         return opt;
     }
