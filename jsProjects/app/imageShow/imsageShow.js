@@ -19,9 +19,15 @@
         var opts = $.extend({
             container:$(window),
             data:null,
-            dataUrl:'data-url',
-            fadeIn:0,
-            noLoadedImg:'noLoadedImg.jpg'
+           // dataUrl:'data-url',
+            fadeTime:10,
+            noLoadedImg:'noLoadedImg.jpg',
+            imageListClass:null,
+            updateImg:null,
+            eventsTrigger:['scroll','resize'],
+            isNeedUpdate: function (rect,outerRect) {
+                return (rect.top > 0 && rect.top <= outerRect.bottom);
+            }
         },options||{});
         var imageListClass = opts.imageListClass;
         for (var i in opts.data) {
@@ -32,14 +38,10 @@
 
             //obj.addClass(opts.noLoadedImg);
             e.obj = obj;
-            if (opts.addFun) {
-                opts.addFun(self, e);
-            } else {
-                self.append(obj);
-            }
-            //obj.attr("src",opts.noLoadedImg);
-            obj.attr("src", e.url);
-            if (imageListClass)obj.addClass(imageListClass);
+            opts.addFun? opts.addFun(self, e): self.append(obj);
+            obj.attr("src",opts.noLoadedImg);
+            //obj.attr("src", e.url);
+            imageListClass&&obj.addClass(imageListClass);
         }
         ;
 
@@ -47,33 +49,34 @@
     }
 	$.fn.imageLazyLoading= function(options){
 		var self = $(this);
-        var opts=prepareOptions(self,options);
-		var cter = opts.container,cterRect;
-        var isNeedUpdate=function(obj){
-            var rect = obj.getRect();
-            return rect.top<=cterRect.bottom;
-        };
-		var record =0;
+       // var opts=prepareOptions(self,options);
+        var opts = $.extend({},options);
+		var cter = opts.container||self;//,cterRect=cter.getRect();
+        var isNeedUpdate=function(obj,cterRect){
+            return opts.isNeedUpdate(obj.getRect(),cterRect);
+        }
+        var updateImg= function(e,index){
+            var obj = e.obj;
+            obj.fadeIn(opts.fadeTime);
+            obj.attr("src", e.url);
+            e.updated = true;
+            opts.updateImg&&opts.updateImg(e,index);
+            //record=i;
+            //if(updateFlag){
+            //  updateFlag=false;
+            //max +=i;
+            // max=(len>max)?max:len;
+            //}
+        }
+		//var record =0;
 		var lazyLoading = function(){
             cterRect = cter.getRect();
 			//$.each(opts.data,function(i,e){
-			var data = opts.data,max =record+20,updateFlag=true;
-			for(var i=0,len=data.length;i<max;i++){
-				var e=data[i],obj = e.obj,
+			var data = opts.data;//,updateFlag=true;
+			for(var i=0,e;e=data[i];i++){
+				var obj = e.obj,
 				url = e.url;
-				if(!e.updated){
-					if(isNeedUpdate(obj)){
-						obj.fadeIn(10);
-						obj.attr("src",url);
-						e.updated = true;
-                        record=i;
-						if(updateFlag){
-                            updateFlag=false;
-                            //max +=i;
-                            max=(len>max)?max:len;
-                        }
-					}
-				}
+				!e.updated&&isNeedUpdate(obj,cterRect)&&updateImg(e,i);
 			};
 
 		};
@@ -87,23 +90,76 @@
 				},_delay);
 			}
 		};
-		cter.on("scroll",checkLoading);
-		cter.on("resize",checkLoading);
+        for(var i in opts.eventsTrigger){
+            cter.on(opts.eventsTrigger[i],checkLoading);
+        }
+        //console.log(cter);
+        //cter.on("mousemove",function(e){
+           //console.log("...");
+        //});
 		lazyLoading();
 	};
 
     $.fn.usePhotoBox=function(options){
         var self = $(this);
-        options.addFun = function(parent,e){
-            var path = options.getCompressdPath();
-            var a= $("<a></a>");
-            a.attr("href",e.url);
-            e.url = path+"/"+ e.name;
-            parent.append(a.append(e.obj));
+        var opts = prepareOptions(self, $.extend( {
+            addFun: function (parent, e) {
+                var path = this.getCompressdPath();
+                var a = $("<a></a>");
+                a.attr("href", e.url);
+                e.url = path + "/" + e.name;
+                parent.append(a.append(e.obj));
+            },
+            updateImg: function (e, index) {// update photobox image
+                var data = self.data('_photobox');
+                var image = null
+                if (data && data.images && (image = data.images[index])) {
+                    image[2] = e.url;
+                    var thumbs = getThumbs();
+                    thumbs[index].src = e.url;
+                    //console.log(e.url+"  "+index);
+                }
+            }
+        },options));
+        self.imageLazyLoading(opts);
+        var runflag= true;
+        self.photobox('a',{ time:0 },function(){
+            if(runflag){
+                runflag=false;
+                addLazyLoadingForPhotobox();
+            }
+        });
+        var thumbs=null;
+        function getThumbs(){
+          return thumbs||(thumbs = initThumbs());
+        };
+        function initThumbs(){
+            return $('#pbCaption').find("img");
+        };
+        function addLazyLoadingForPhotobox() {
+            var data = opts.data,
+                thumbs = getThumbs(),
+                newData=[];
+            for (var i = 0, e; e = data[i]; i++) {
+                e.obj = $(thumbs[i]);
+                newData.push(e);
+            }
+            var eventsTrigger=['mousemove'];
+            var cter = $('#pbCaption');
+            var options = $.extend(opts,{
+                updateImg: function (e, index) {// update source image
+                    var sourceE = data[index];
+                    sourceE && ( sourceE.obj.attr("src", e.url));
+                },
+                isNeedUpdate:function(rect,outerRect){
+                    return rect.right>=outerRect.left&&rect.left<=outerRect.right;
+                },
+                eventsTrigger:eventsTrigger,
+                data:newData,
+                container:cter
+            });
+            cter.imageLazyLoading(options);
         }
-        var opts = prepareOptions(self,options)
-        //self.imageLazyLoading(opts);
-        self.photobox('a',{ time:0 });
 
         // using a callback and a fancier selector
         //----------------------------------------------

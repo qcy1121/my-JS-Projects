@@ -15,17 +15,17 @@
     <script src="data.js" ></script>
     <style>
         .imageList{
-            width:100px;height:80px;border-radius:10px;border:2px;
+            width:100px;height:80px;border-radius:10px;border:2px;border-left:4px;
         }
     </style>
 </head>
 <body>
 <div id="selectDiv"  style="display:inline-flex"></div>
-<div id="showDiv" style="width:90%;height:90%;overflow: scroll;">
-    <div id="myGallery">
+<!--<div id="showDiv" style="width:1024px;height:600px;overflow:auto;">auto-->
+    <div id="myGallery" style="width:1024px;height:600px;overflow: scroll;">
 
     </div>
-</div>
+<!--</div>-->
 <script>
     var dd,div=$("#selectDiv");
     for(var i in data){
@@ -46,7 +46,7 @@
     getOpts=function(i){
         var path ;
         var opt = {
-            container:$("#showDiv"),
+            container:$("#myGallery"),
             data:i===undefined||i===null ?data:data[i],
             getCompressdPath:function(i){
 
