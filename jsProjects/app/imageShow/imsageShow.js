@@ -140,7 +140,8 @@
             var data = opts.data,
                 thumbs = getThumbs(),
                 newData=[];
-            for (var i = 0, e; e = data[i]; i++) {
+            for (var i = 0, v; v = data[i]; i++) {
+                var e = $.extend({},v);
                 e.obj = $(thumbs[i]);
                 newData.push(e);
             }
