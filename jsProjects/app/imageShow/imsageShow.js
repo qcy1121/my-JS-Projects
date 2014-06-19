@@ -104,7 +104,7 @@
         var self = $(this);
         var opts = prepareOptions(self, $.extend( {
             addFun: function (parent, e) {
-                var path = this.getCompressdPath();
+                var path = this.getCompressedPath();
                 var a = $("<a></a>");
                 a.attr("href", e.url);
                 e.url = path + "/" + e.name;
@@ -178,9 +178,11 @@
        // self.photobox('prepareDOM');
     }
     $.fn.removePhotoBox=function(){
-        $(this).photobox('destroy');
+       var self = $(this);
+        self.photobox('destroy');
+        return self;
     }
     $.fn.cleanImageShow=function(){
-
+        $(this).children().remove();
     }
 })(jQuery)

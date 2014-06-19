@@ -20,41 +20,42 @@
     </style>
 </head>
 <body>
-<div id="selectDiv"  style="display:inline-flex"></div>
+<div id="selectDiv"  style="display:inline-flex; padding:5px;"></div>
 <!--<div id="showDiv" style="width:1024px;height:600px;overflow:auto;">auto-->
     <div id="myGallery" style="width:1024px;height:600px;overflow: scroll;">
 
     </div>
 <!--</div>-->
 <script>
-    var dd,div=$("#selectDiv");
+    "use strict"
+    var dd,div=$("#selectDiv"), target=$("#myGallery"),paths = [];
     for(var i in data){
         console.log(data[i] instanceof Array);
         if(data[i] instanceof Array)
         {
-            var name = i.substring(2);
-            var child = $("<div>");
-            child.html("<a href='#' >"+name+"</a>");
+            var name = i.split('/').pop();//,ops = getOpts(i);
+            var child = $("<div>").css({padding:'5px'}).html("<a href='#' >"+name+"</a>");
+            child.attr('i',i);
             child.on('click',function(){
-                var target=$("#myGallery");
-                target.html("");
-                target.usePhotoBox(getOpts(i));
+                !target.html()||target.cleanImageShow();
+                target.usePhotoBox(getOpts($(this).attr('i')));
             });
             div.append(child);
         }
     }
-    getOpts=function(i){
-        var path ;
+    function getOpts(i){
         var opt = {
-            container:$("#myGallery"),
-            data:i===undefined||i===null ?data:data[i],
-            getCompressdPath:function(i){
-
-                if(path)return path;
-                i="./images/233_0515";
+            container:target,
+            i:i,
+            data:i ?data[i]:data,
+            getCompressedPath:function(){
+                var i= this.i;
+                if(paths[i])return paths[i];
+                i=i||"./images/233_0515";
                 var ps = i.split("/");
                 ps.splice(2,0,"compressed");
-                path= ps.join("/");
+                var path= ps.join("/");
+                paths[i]= path;
                 return path;
             },
             imageListClass:"imageList"

@@ -1,5 +1,5 @@
 ﻿var fs = require("fs"),
-    path = "./images/233_0515";// the folder path to get images
+    path = "./images";//233_0515";// the folder path to get images
 
 function readDir(path, obj, callback) {
 
