@@ -30,14 +30,14 @@
     "use strict"
     var dd,div=$("#selectDiv"), target=$("#myGallery"),paths = [];
     for(var i in data){
-        console.log(data[i] instanceof Array);
+       // console.log(data[i] instanceof Array);
         if(data[i] instanceof Array)
         {
             var name = i.split('/').pop();//,ops = getOpts(i);
             var child = $("<div>").css({padding:'5px'}).html("<a href='#' >"+name+"</a>");
             child.attr('i',i);
             child.on('click',function(){
-                !target.html()||target.cleanImageShow();
+                //!target.html()||target.cleanImageShow();
                 target.usePhotoBox(getOpts($(this).attr('i')));
             });
             div.append(child);
