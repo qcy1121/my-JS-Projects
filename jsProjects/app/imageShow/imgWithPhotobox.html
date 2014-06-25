@@ -29,6 +29,8 @@
 <script>
     "use strict"
     var dd,div=$("#selectDiv"), target=$("#myGallery"),paths = [];
+    var w = $(window);
+    target.css({width: (w.width()-40)+"px",height: (w.height()-60)+"px"});
     for(var i in data){
        // console.log(data[i] instanceof Array);
         if(data[i] instanceof Array)

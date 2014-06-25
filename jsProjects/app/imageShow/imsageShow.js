@@ -67,19 +67,24 @@
             for (var i = 0, e; e = data[i]; i++) {
                 var obj = e.obj;
                 //console.log( e.src);
+                if(this.stop){this.stop=false; break;}
                 !e.updated && this.isNeedUpdate(obj, this.cterRect) && this.updateImg(e, i);
                 // delete e;
             }
         },
+        stop:false,
+        //timeOuts:[],
         checkLoading: function () {
             var _this = this;
-            if (!this.lock) {
-                this.lock = true;
-                this.lazyLoading();
-                setTimeout(function () {
-                    _this.lock = false;
-                }, this.delay);
-            }
+            //if (!this.lock) {
+                //this.lock = true;
+                this.stop=true;
+                //this.lazyLoading();
+               setTimeout(function () {
+                    _this.stop = false;
+                   _this.lazyLoading();
+               }, this.delay);
+           // }
         },
         resize: function () {
             this.cterRect = this.cter.getRect();
@@ -151,6 +156,7 @@
        // if (!runFLag) {
             $('#pbCaption').length==0&& self.photobox("prepareDOM");//.on();
         //}
+        runFLag = true;
         self.photobox('a', { time: 0 }, function () {
             if (runFLag) {
                 runFLag = false;
