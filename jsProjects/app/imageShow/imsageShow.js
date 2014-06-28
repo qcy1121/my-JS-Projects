@@ -9,15 +9,15 @@
             console.error("not support Rect");
         } else {
             var rect = node.getBoundingClientRect();
-            left = right = this.scrollTop();
-            top = bottom = this.scrollTop();
+            //left = right = this.scrollTop();
+            //top = bottom = this.scrollTop();
             left += rect.left;
             right += rect.right;
             top += rect.top;
             bottom += rect.bottom;
         }
         ;
-        return { "left": left, "top": top, "right": right, "bottom": bottom };
+        return rect;//{ "left": left, "top": top, "right": right, "bottom": bottom,width };
     };
     var imageData = {srcData: null, showData: null};
     var imageLazyLoad = function (self, options) {
@@ -39,7 +39,7 @@
             updateImg: null,
             eventsTrigger: ['scroll', 'resize'],
             isNeedUpdate: function (rect, outerRect) {
-                return (rect.top > 0 && rect.top <= outerRect.bottom);
+                return rect.width>0 &&(rect.top > 0 && rect.top <= outerRect.bottom);
             }
         },
         setOpts: function (options) {
@@ -67,24 +67,29 @@
             for (var i = 0, e; e = data[i]; i++) {
                 var obj = e.obj;
                 //console.log( e.src);
-                if(this.stop){this.stop=false; break;}
+                //if(this.stop){this.stop=false; break;}
                 !e.updated && this.isNeedUpdate(obj, this.cterRect) && this.updateImg(e, i);
                 // delete e;
             }
         },
         stop:false,
-        //timeOuts:[],
+        timeOut:null,
         checkLoading: function () {
             var _this = this;
-            //if (!this.lock) {
-                //this.lock = true;
-                this.stop=true;
-                //this.lazyLoading();
-               setTimeout(function () {
-                    _this.stop = false;
-                   _this.lazyLoading();
-               }, this.delay);
-           // }
+            if (!this.lock) {
+                this.lock = true;
+                this.lazyLoading();
+                this.lock = false;
+            }
+            if(this.timeOut)clearTimeout(this.timeOut);
+            this.timeOut=setTimeout(function(){//to make sure the loading can be run after move
+                _this.lazyLoading();
+                //_this.lock = false;
+            },_this.delay);
+               //setTimeout(function () {
+
+               //}, this.delay);
+            //}
         },
         resize: function () {
             this.cterRect = this.cter.getRect();
@@ -190,7 +195,7 @@
                     sourceE && im.showImg(sourceE);
                 },
                 isNeedUpdate: function (rect, outerRect) {
-                    return rect.right >= outerRect.left && rect.left <= outerRect.right;
+                    return rect.width>0&& rect.right >= outerRect.left && rect.left <= outerRect.right;
                 },
                 eventsTrigger: eventsTrigger,
                 data: newData,
