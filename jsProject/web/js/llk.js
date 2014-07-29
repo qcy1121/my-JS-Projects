@@ -139,14 +139,14 @@ var GridView = (function() {
 						{y:6,x:7},
 						{y:6,x:8},
 						{y:6,x:9},
-						/*{y:6,x:10},
+						{y:6,x:10},
 						{y:6,x:11},
 						{y:6,x:12},
 						{y:6,x:13},
 						{y:6,x:14},
 						{y:7,x:13},
 						{y:7,x:14},
-	        			{y:7,x:15},*/
+	        			{y:7,x:15}
 	        	            ];
 	};
 	
@@ -154,7 +154,8 @@ var GridView = (function() {
 	
 	GridView.prototype = {
 		calculateLevel:function(){
-			var levelVal = this.levels[this.level-1];
+            this.level>this.levels.length&&(alert("你通关了，再通一次吧！"),this.level=1);
+			var levelVal =  this.levels[this.level-1];
 			this.xNum = levelVal.x; // rows of view table
 			this.yNum =  levelVal.y; // columns of view table
 			/*if(this.xNum * this.yNum %2){
