@@ -1,21 +1,91 @@
-table {
+html{
+width:100%;
+    height: 100%;
+}
+.barTable{
+    position:relative;
+    width:100%;
+    min-height:2em;
+    margin:0 auto;
+}
+.timeBarContent{
+    position:absolute;
+    top:0.5em;
+    margin:0px;
+    display:inline;
+}
+.timeLeft{
+    min-width:10px;
+    width:5.5em;
+    float:left;
+}
+.timeBarLeft{
+    right:31%;
+    width:69%;
+}
+.timeBarRight{
+    width:29%;
+    left:71%;
+}
+.progressBar{
+    margin-left:5em;
+}
+.ui-progressbar.progressBar {
+    height:1em;
+    /*width:100%;
+    position: absolute;*/
+}
+.tableDiv {
 	border-collapse: collapse;
-	background-color: black;
+	background-color: white;
 	border-radius: 10px;
+    margin-left: 4em;
+    min-height: 1em;
+    position:relative;
+}
+.clearfix:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+.co-main{
+    float: left;
+    width: 100%;
 }
 
-td {
+.outDiv{
+    width:100%;
+    height: 100%;
+}
+
+.myButtonDiv {
+  /* float:left;*/
+    width:3em;
+}
+.content{
+    /*width:100%;*/
+
+}
+.gridTable{
+    margin: 0 0.5em 0 0;
+}
+.gridCell {
 	/*
 	border: solid #ccc 1px;
 	
 	height: 36px;
 	width: 36px;
 	*/
+    margin:10px 0;
+    display:inline;
 	cursor: pointer;
 	padding: 2px;
 }
 
-td img {
+.gridCell img,
+.gridCell .imgCell{
 	height: 36px;
 	width: 36px;
 	/*
@@ -26,27 +96,11 @@ td img {
 	  opacity: 0.8;
 	  */
 }
-.outDiv{
-	width:100%;
-	
+.imgCell{
+    display:inline;
 }
 
-.myButtonDiv {
-	padding:0px 8px;
-	margin-top:20px;
-	float:left;
-}
-.barTable{
-	margin-left:70px;
-	/* float:right; */
-}
-#bar{
-	width:99%;
-	height:10px;
-	display:inline-flex;
-	margin-bottom:20px;
-}
-.ui-progressbar.timeBar{
+/*.ui-progressbar.timeBar{
 	
 	width:65%;
 	height:15px;
@@ -57,12 +111,15 @@ td img {
 	width:10%;
 	height:15px;
 	display:block;
-}
-.tableDiv{
+}*/
+/*.tableDiv{
 	position:relative;
-}
+}*/
 .underlay{
 	background: gray;
+    position: absolute;
+    top:0px;
+    left:0px;
 	z-index:100;
 }
 .imgCell {
@@ -85,7 +142,7 @@ td img {
 	text-shadow: rgba(0, 0, 0, .4) 0 1px 0;
 	color: darkgreen; /*purple;*/
 	font-size: 36px;
-	font-family: \534E\6587\7425\73C0; /* »ªÎÄçúçê */ /* Georgia, serif;*/
+	font-family: \534E\6587\7425\73C0; /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */ /* Georgia, serif;*/
 	text-decoration: none;
 	vertical-align: middle;
 }    
@@ -150,6 +207,9 @@ td img {
 	background-image:url(../svg/unlock.svg);
 }
 
+.hidden{
+    display:none;
+}
 
 
 /*icon end */

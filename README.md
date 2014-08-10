@@ -1,7 +1,7 @@
 picture-matching
 ================
 
-a javascript verison picture matching game.
+a javascript version picture matching game.
 
 
 Reference to the two examples:

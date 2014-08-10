@@ -6,7 +6,8 @@ var __extends = this.__extends || function(d, b) {
 	__.prototype = b.prototype;
 	d.prototype = new __();
 };
-define(["exports","jquery","app/dataApi","app/utils"],function(exports,$,webApi){
+define(["exports","jquery","app/dataApi","app/utils"],function(exports,$,webApi,utils){
+    var StringMap = utils.StringMap;
 var GridCell = (function() {
 
 	function GridCell(cell/*Cell*/){
@@ -179,10 +180,10 @@ var GridView = (function() {
 				for(var j=0;j<this.yNum;j++){
 					if((this.cells.length % 2)==0)img = this.getRandomImg();
 					//console.log(img);
-					cell = this.createNewCell(i,j,img);
+					var cell = this.createNewCell(i,j,img);
 					cell.view = this;
 					//cell.onclick = this.onClick;
-					gridCell = new GridCell(cell);
+					var gridCell = new GridCell(cell);
 					this.cells.push(cell );
 					this.gridCells[i].push(gridCell);
 					this.pushToImgMap(img, cell);
@@ -272,19 +273,19 @@ var GridView = (function() {
 			//this.parentElement.empty();
 			var table = this.table,col,cell,underlay = this.underlay;
 			if(!table){
-				table = $("<table id='gridTable' class='gridTable'></table>");
+				table = $("<div id='gridTable' class='gridTable'></div>");
 				underlay =$("<div>").addClass("underlay");
 				table.appendTo(this.parentElement);
 				underlay.appendTo(this.parentElement);
 			}
 			table.empty();
 			for(var i=0;i<this.yNum;i++){
-				col = $("<tr></tr>");
+				col = $("<div class='gridRow'> </div>");
 				col.appendTo(table);
 				for(var j=0;j<this.xNum;j++){
 					cell = this.gridCells[j][i].cell;
 					//$("<td>"+cell.toHtml()+"</td>").appendTo(col);
-					var td = $("<td></td>");
+					var td = $("<div class='gridCell'></div>");
 					td.append(cell.draw());
 					td.appendTo(col);
 				}

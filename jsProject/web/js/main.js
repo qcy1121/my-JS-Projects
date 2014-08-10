@@ -11,13 +11,13 @@ require.config({
 
 	require(['jquery', "app/llk", "app/data",'jui', 'app/jutils'], function ($, llk,data) {
 
-	    var gridView, $out = $("#outDiv");
+	    var gridView, $out = $("#outDiv"),$myButtonDiv=$("#myButtonDiv");
 
 	    var outWidth = $out.width(),
 	        outHeight = $out.height(),
-	        leftWidth = 70,
+	        leftWidth = $myButtonDiv.width(),
 	        rightWidth = outWidth - leftWidth;
-	    var div = $("#tableDiv").addClass("tableDiv").width(rightWidth);
+	    var div = $("#tableDiv");//.addClass("tableDiv");//.width(rightWidth);
 
 	    //console.log(width+"  "+height);
 
@@ -25,11 +25,12 @@ require.config({
 	    	storage = new data.StorageApi()||{},
 	        time, shorttime = 3,
 	        islocked = false,
+            $timeBar=$("#timeBar"),$awardBar=$("#awardBar"),$links=$("#links"),$timeLeft=$("#timeleft"),
 	        timerCallback = function () {
-	            $("#timeBar").progressbar("value", this.time1);
-	            $("#awardBar").progressbar("value", this.time2);
-	            $("#links").text(this.time2);
-	            $("#timeleft").text(this.time1);
+	            $timeBar.progressbar("value", this.time1);
+	            $awardBar.progressbar("value", this.time2);
+	            $links.text(this.time2);
+	            $timeLeft.text(this.time1);
 	            if (this.time1 <= 10) {
 	                // $("timeBar").toggleClass("red");
 	            }
@@ -133,14 +134,14 @@ require.config({
 	            text: false
 	        }).click(lock);
 	        $("#draw,#drawWords,#refresh,#hint,#lock").addClass("ui-button-block");
-	        $("#timeBar").progressbar({
+            $timeBar.progressbar({
 	            max: maxtime,
 	            value: maxtime
-	        }).addClass("timeBar");
-	        $("#awardBar").progressbar({
+	        });//.addClass("timeBar");
+	        $awardBar.progressbar({
 	            max: shorttime,
 	            value: 0
-	        }).addClass("awardBar");
+	        });//.addClass("awardBar");
 	    };
 
 	    function enableBtn() {
