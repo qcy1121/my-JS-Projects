@@ -2,7 +2,6 @@
 define(['exports'],function(exports){
     var StringMap = (function() {
         function StringMap() {
-            this.size = 0;
             this.map = Object.create(null);
         }
         ;
@@ -20,12 +19,7 @@ define(['exports'],function(exports){
                 return this.convertKeyToProperty(key) in this.map;
             },
             remove : function(key) {
-                var has = this.has(key);
-                var result = delete this.map[this.convertKeyToProperty(key)];
-                if (has && result) {
-                    this.size--;
-                }
-                return result;
+                return delete this.map[this.convertKeyToProperty(key)];
             },
             removeWhere : function(filter) {
                 var toRemove = [];
@@ -70,7 +64,9 @@ define(['exports'],function(exports){
                 return true;
             },
             length : function() {
-                return this.size;
+               var size=0;
+                for(var i in this.map)size++;
+                return size;
             }
         };
         return StringMap;

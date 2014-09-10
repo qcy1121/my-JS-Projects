@@ -74,10 +74,10 @@ require.config({
 	        gridView.refresh();
 	    };
 	    var hint = function () {
-	    	var str= "hintCount",i = storage.getItem(str),i=i?i:0;
-	    	jconfirm("一共使用了"+ i +"次提示，继续使用提示吗？",function(res){
-	    		if(res){gridView.hint();storage.setItem(str,++i);}
-	    	});
+	    	var str= "hintCount",i = storage.getItem(str),i=i||0;
+	    	jconfirm("一共使用了"+ i +"次提示，继续使用提示吗？").then(function(res){
+                if(res){gridView.hint();storage.setItem(str,++i);}
+            });
 	       // gridView.hint();
 
 	    };
