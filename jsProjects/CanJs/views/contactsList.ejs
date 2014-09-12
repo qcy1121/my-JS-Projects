@@ -1,0 +1,18 @@
+    <ul class="clearfix">
+            <% list(contacts, function(contact){ %>
+        <li class="contact span8"<%= console.log(el),(el)-> el.data('contact', contact) %>>
+            <%== can.view.render('views/contactView.ejs', {
+        contact: contact, categories: categories
+      }) %>
+        </li>
+            <% }) %>
+        </ul>
+       <%
+       /*
+        EJS 模板的标签与HTML很像，支持包含JS代码，三种常用标签如下：
+            //< % CODE % > 执行JS
+            //< %= CODE % > 执行JS，并将非转义的结果写入当前位置的HTML
+            //< %== CODE % >  执行JS，并将转义的结果写入当前位置的HTML(用于子模板).
+        can.view.render() 以模板和数据为参数返回HTML
+        */
+        %>
