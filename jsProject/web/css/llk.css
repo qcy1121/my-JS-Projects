@@ -1,35 +1,35 @@
 *{margin:0;padding:0;}
-html{
-width:100%;
-    height: 100%;
+body{
+    margin:20px;
 }
 .barTable{
-    position:relative;
-    width:100%;
+    /*position:relative;
+    width:100%;*/
     min-height:2em;
     margin:0 auto;
 }
 .timeBarContent{
-    position:absolute;
+    /*position:absolute;
     top:0.5em;
     margin:0px;
-    display:inline;
+    display:inline;*/
+    display:inline-block;
 }
 .timeLeft{
-    min-width:10px;
-    width:5.5em;
+    /*min-width:10px;*/
+    width:6em;
     float:left;
 }
+.timeBarRight .timeLeft{
+    width:4em;
+}
 .timeBarLeft{
-    right:31%;
+    /*right:31%;*/
     width:69%;
 }
 .timeBarRight{
     width:29%;
-    left:71%;
-}
-.progressBar{
-    margin-left:5em;
+    /*left:71%;*/
 }
 .ui-progressbar.progressBar {
     height:1em;
@@ -46,7 +46,7 @@ width:100%;
 }
 .clearfix:after {
     clear: both;
-    content: ".";
+    content: "";
     display: block;
     height: 0;
     visibility: hidden;
@@ -84,7 +84,9 @@ width:100%;
 	cursor: pointer;
 	padding: 2px;
 }
-
+.gridRow{
+    margin-bottom:10px;
+}
 .gridCell img,
 .gridCell .imgCell{
 	height: 36px;
@@ -122,6 +124,7 @@ width:100%;
     top:0px;
     left:0px;
 	z-index:100;
+    padding:10px 0;
 }
 .imgCell {
 	border-radius: 11px;
