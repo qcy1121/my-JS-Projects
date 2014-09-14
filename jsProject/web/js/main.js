@@ -12,12 +12,7 @@ require.config({
 	require(['jquery', "app/llk", "app/data",'jui', 'app/jutils'], function ($, llk,data) {
 
 	    var gridView, $out = $("#outDiv"),$myButtonDiv=$("#myButtonDiv");
-
-	    var outWidth = $out.width(),
-	        outHeight = $out.height(),
-	        leftWidth = $myButtonDiv.width(),
-	        rightWidth = outWidth - leftWidth;
-	    var div = $("#tableDiv");//.addClass("tableDiv");//.width(rightWidth);
+	    var $tableDiv = $("#tableDiv");//.addClass("tableDiv");//.width(rightWidth);
 
 	    //console.log(width+"  "+height);
 
@@ -31,9 +26,12 @@ require.config({
 	            $awardBar.progressbar("value", this.time2);
 	            $links.text(this.time2);
 	            $timeLeft.text(this.time1);
-	            if (this.time1 <= 10) {
-	                // $("timeBar").toggleClass("red");
+	            if (this.time1 <= 10 &&this.time1>0) {
+	                 $timeBar.toggleClass("red");
 	            }
+                if(this.time2>0){
+                    $awardBar.toggleClass('red');
+                }
 	        },
 	        levelUpCallback = function(level){
 	        	storage.setItem("level",level);
@@ -50,26 +48,50 @@ require.config({
 	        var time = $.extend({}, timeObj);
 	        return {
 	            timeObj: time,
-	            width: rightWidth,
+	           // width: rightWidth,
 	            level: storage.getItem("level"),
 	            levelUpCallback:levelUpCallback
 	        };
 	    };
 	    var draw = function () {
 	        if (gridView) gridView.destroy();
-	        gridView = new llk.GridView(div, createOpts());
+	        gridView = new llk.GridView($tableDiv, createOpts());
 	        //gridView.setImgNum(10);
 	        gridView.render();
-	        enableBtn();
+            afterRun();
 	    };
 	    var drawWords = function () {
 	        if (gridView) gridView.destroy();
-	        gridView = new llk.WordGridView(div, createOpts());
+	        gridView = new llk.WordGridView($tableDiv, createOpts());
 	        gridView.render();
-	        enableBtn();
+            afterRun();
 	        //$("#refresh").attr("disabled",false).removeAttr("disabled");
 	        //$("#hint").removeAttr("disabled");
 	    };
+        var afterRun=function(){
+            enableBtn();
+           // updateScale();
+        }
+        // todo to update scale to cover all the screen
+        var updateScale=function(){
+            var outWidth = $out.width(),
+            outHeight = $out.height(),
+            leftWidth = $myButtonDiv.width(),
+            rightWidth = outWidth - leftWidth,
+            rightHeight = outHeight-$timeBar.height();
+            var tableDivWidth = $tableDiv.width(),tableDivHeight=$tableDiv.height();
+            if(!tableDivWidth||!tableDivHeight)return;
+            var xScale=rightWidth/tableDivWidth,yScale=rightHeight/tableDivHeight,
+                scales = 'scale('+xScale+","+yScale+");";
+
+            var css={
+                '-moz-transform': scales,
+                '-ms-transform': scales,
+                '-webkit-transform': scales,
+                'transform': scales
+        }
+            $tableDiv.css(css);
+        };
 	    var refresh = function () {
 	        gridView.refresh();
 	    };
@@ -142,6 +164,7 @@ require.config({
 	            max: shorttime,
 	            value: 0
 	        });//.addClass("awardBar");
+
 	    };
 
 	    function enableBtn() {
