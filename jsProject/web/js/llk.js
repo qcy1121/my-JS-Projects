@@ -6,7 +6,7 @@ var __extends = this.__extends || function(d, b) {
 	__.prototype = b.prototype;
 	d.prototype = new __();
 };
-define(["exports","jquery","app/dataApi","app/utils"],function(exports,$,webApi,utils){
+define(["exports","jquery","app/dataApi","app/utils","app/llkData"],function(exports,$,webApi,utils,llkData){
     var StringMap = utils.StringMap;
 var GridCell = (function() {
 
@@ -222,7 +222,9 @@ var GridView = (function() {
 			}
 			this.imgs = [];
 			for(var i=0;i<num;i++){
-				var img = path+"/llk_"+i+".gif";
+				//var img = path+"/llk_"+i+".gif";
+                //utils.ImageTool.logBase64ByImagePath(img);
+                var img = llkData.llkData.getImage(i);
 				this.imgs.push(img);
 			}
 		},

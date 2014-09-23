@@ -71,7 +71,64 @@ define(['exports'],function(exports){
         };
         return StringMap;
     })();
+
+    var ImageTool = (function(){
+        var ImageTool = function(){
+
+        }
+        var canvas,image,
+        getCanvas = function(){
+            if(canvas) return canvas;
+            canvas = document.createElement("canvas");
+            return canvas;
+        },
+        getImage = function(){
+            //if(image)return image;
+            //var
+            //    image = document.createElement("image");
+            return new Image();
+        };
+        ImageTool.getBase64Image = function(img,type) {
+            type =type||'png';
+            // Create an empty canvas element
+            var canvas = getCanvas();
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Copy the image contents to the canvas
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+
+            // Get the data-URL formatted image
+            // Firefox supports PNG and JPEG. You could check img.src to
+            // guess the original format, but be aware the using "image/jpg"
+            // will re-encode the image.
+            var dataURL = canvas.toDataURL("image/"+type);
+
+            return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+        }
+        ImageTool.logBase64ByImagePath=function(path){
+            var reg = /.*\.(img|png|jpg|gif)$/i,
+                type;
+            reg.test(path);
+            type = RegExp.$1;
+            var image = getImage();
+            var _this = this;
+            image.onload=function(){
+                console.log("'"+ _this.getBase64Image(image,type)+"',");
+                image = null;
+            };
+            image.src = path;
+        }
+        return ImageTool;
+    })();
+
+
+
+
     exports.StringMap = StringMap;
+    exports.ImageTool = ImageTool;
+
 });
 
 

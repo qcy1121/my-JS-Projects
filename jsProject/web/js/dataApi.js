@@ -25,11 +25,11 @@ define(["exports","jquery"],function(exports,$){
             wordsArray: function () {
                 var arr= dataApi.wordsArray;
                 return arr.slice(0,arr.length);
-            },
+            }/*,
             imagesArray:function(){
                 var arr = dataApi.imagesArray;
                 return arr?arr.slice(0,arr.length):dataApi.loadImages();
-            }
+            }*/
         }
         dataApi.loadImages=function(){
 
