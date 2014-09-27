@@ -1,24 +1,28 @@
-*{margin:0;padding:0;}
+
+html{
+    height:99%;
+}
+*{border:red 1px solid;}
 body{
-    margin:20px;
+
+    height:99%;
 }
 .barTable{
     /*position:relative;
-    width:100%;*/
-    min-height:2em;
-    margin:0 auto;
+    width:100%;
+    margin:0 auto;*/
+    height:2em;
 }
 .timeBarContent{
     /*position:absolute;
     top:0.5em;
-    margin:0px;
-    display:inline;*/
+    margin:0px;*/
     display:inline-block;
 }
 .timeLeft{
     /*min-width:10px;*/
-    width:6em;
     float:left;
+    width:6em;
 }
 .timeBarRight .timeLeft{
     width:4em;
@@ -44,36 +48,34 @@ body{
 	background-color: white;
 	border-radius: 10px;
     margin-left: 4em;
-    min-height: 1em;
     position:relative;
+    height: 100%;
 }
 .clearfix:after {
     clear: both;
     content: "";
-    display: block;
-    height: 0;
     visibility: hidden;
 }
-.co-main{
-    float: left;
-    width: 100%;
+
+.outDiv{
+    box-sizing: border-box;
+    padding:20px;
+    height: 100%;
 }
+.content{
+    margin-top:-2em;
+    padding-top:2em;
+    height: 100%;
+    box-sizing: border-box;
 
-/*.outDiv{*/
-    /*width:100%;*/
-    /*height: 100%;*/
-/*}*/
-
+}
 .myButtonDiv {
    float:left;
     width:3em;
 }
-.content{
-    /*width:100%;*/
 
-}
 .gridTable{
-    margin: 0 0.5em 0 0;
+    margin: 0 .5em 0 0;
 }
 .gridCell {
 	/*
@@ -92,8 +94,8 @@ body{
 }
 .gridCell img,
 .gridCell .imgCell{
-	height: 36px;
-	width: 36px;
+	height: 2em;
+	width: 2em;
 	/*
 	border: solid #fff 3px;
 	
@@ -178,8 +180,10 @@ body{
 }
 /* icon start */
 .ui-button.ui-button-block{
-	display:block;
+	/*display:block;*/
 	margin:20px 2px;
+    width:2.5em;
+    height:2.5em;
 	/* width:42px;
 	height:42px;
 	top:4px;
@@ -187,10 +191,10 @@ body{
 	margin:0px; */
 }
 .ui-button.ui-widget.ui-button-icon-only .ui-icon.my-ui-icon{
-	width:42px;
-	height:42px;
-	top:4px;
-	left:4px;
+    width:100%;
+    height:100%;
+    top:0px;
+	left:0px;
 	margin:0px;
 } 
 .ui-button .ui-icon.my-ui-icon-run-01{
