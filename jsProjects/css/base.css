@@ -1,0 +1,60 @@
+﻿ *{padding:0px;margin:0px}
+            body,html{
+                    width:99%;height:99%;
+                    /*overflow:hidden;
+                    border:1px solid red;
+                        */
+                }
+            @media all and (max-width:480px){
+                body:before{
+                    content:"100%";
+                }
+                .body{
+                    width:100%;
+                }
+            }
+            @media all and (max-width:680px) and (min-width:481px){
+                body:before{
+                    content:"480px";
+                }
+                .body{
+                    width:480px;
+                }
+            }
+            @media all and (max-width:800px) and (min-width:681px){
+                body:before{
+                    content:"680px";
+                }
+                .body{
+                    width:680px;
+                }
+            }
+             @media all and (max-width:1000px) and (min-width:801px){
+                 body:before{
+                    content:"800px";
+                }
+                .body{
+                    width:800px;
+                }
+            }
+               @media all and (min-width:1001px){
+                 body:before{
+                    content:"1000px";
+                }
+                .body{
+                    width:1000px;
+                }
+            }
+            /*
+               之前在css3tranform页面使用媒体查询不成功，页面多出一个滚动条，但是所有元素的宽度是对的，
+                后来把body设成overflow=hidden，页面就好了。是因为在页面中用的margin或者浮动了，
+                导致滚动条出现，影响了页面查询。
+                修复方法，将造成影响的父级元素设置overflow=hidden，或者改成其他实现方式。
+                */
+            .body{
+                margin:10px auto;
+                
+                 background-color:#DDF879;
+                /*-wwbkit-box-sizing:border-box;
+                border:solid 1px;*/
+            }

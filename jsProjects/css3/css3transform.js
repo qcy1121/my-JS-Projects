@@ -36,7 +36,7 @@
 
 })();
 function afterRun() {
-    function addRules(sheet, selector, styles) {
+    var addRules =function(sheet, selector, styles) {
         if (!sheet) return;
         try {
             if (sheet.insertRule) return sheet.insertRule(selector + " {" + styles + "}", sheet.cssRules.length);
@@ -63,7 +63,7 @@ function run() {
         { name: 'scale3d', units: '', x: 1, y: 1,z:1 ,min: -1 }
         //matrix3d(n,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n
         //perspective(n)	Defines a perspective view for a 3D transformed element
-    ]
+    ],
     units = [],units3d=[];
     var createUnit = function (item) {
         var $unit = $("<div class='unit'>"),
@@ -97,7 +97,7 @@ function run() {
         $unit.getStyleValue = getStyleValue;
         return $unit;
     }
-    var $transformDiv = $("<div>").appendTo($btns), $transform3dDiv = $("<div>").appendTo($btns);
+    var $transformDiv = $("<div data-name='transform 2d ' >").appendTo($btns), $transform3dDiv = $("<div data-name='transform 3d ' >").appendTo($btns);
     transform.forEach(function (item) {
         var unit = createUnit(item);
         $transformDiv.append(unit);
@@ -137,8 +137,7 @@ function run() {
     }
 
 }
-$(function () {
-
+$(document).ready(function () {
     run();
     afterRun();
 });

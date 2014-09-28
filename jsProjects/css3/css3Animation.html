@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>css3 animation</title>
+    
+    <link type="text/css"  href='../css/base.css' rel="stylesheet" />
+    <style >
+        /*html{margin:0;padding:0;}*/
+        section{
+            border:1px solid;
+            border-radius:5px 0 5px 5px;
+            margin-top:5px;
+        }
+		div{
+			border-radius:5px 0 5px 5px;
+		}
+        section:nth-child(1){
+            margin-top:0px;
+        }
+        input{
+            margin:5px;
+        }
+        .img{
+            height:15px;
+            width:15px;
+            display: block;
+            margin:15px auto;
+            background:url(../site/tile.png);
+            background-repeat:round;
+        }
+
+      .imgDiv,
+      .img:hover{
+          height: 350px;
+          width: 350px;
+      }
+
+      @-webkit-keyframes rainbow {
+  0% { background: #c00; }
+  50% { background: orange; }
+  100% { background: yellowgreen; }
+}
+
+@keyframes rainbow
+ {
+  0% { background: #c00; }
+  50% { background: orange; }
+  100% { background: yellowgreen; }
+}
+
+
+.atDiv {
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+}
+/*
+.atDiv:hover {
+  -webkit-animation-name: rainbow;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-delay: 1s;
+  -webkit-animation-fill-mode:forwards;
+  -webkit-animation-direction: normal;
+  -webkit-animation-iteration-count: 3;
+  animation-name: rainbow;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-delay: 1s;
+  animation-fill-mode:forwards;
+  animation-direction: normal;
+  animation-iteration-count: 3;
+}
+    */
+
+
+    </style>
+    <script type="text/javascript" src="../src/zepto.js" ></script>
+      <script type="text/javascript" src="../src/event.js" ></script>
+    <script type="text/javascript" >
+
+        var keys = [], keyBtns = [];
+        $(function () {
+            var transitions = [
+                'transition: 1s;',
+                'transition: 1s height;',
+                'transition: 1s height, 1s width;',
+                'transition: 1s height, 1s 1s width;',
+                'transition: 1s ease;',
+                'transition: 1s ease-in;',
+                'transition: 1s ease-out;',
+                'transition: 1s linear;',
+                'transition: 1s height cubic-bezier(.83,.97,.05,1.44);'
+            ]
+            var $btnDiv = $("#buttons"),$img=$('#img'),$at1Btn=$("#at1"),$atDiv=$("#atDiv");
+            transitions.forEach(function (css) {
+                $btnDiv.append(createBtn( css));
+            });
+            $('input[type="button"]').on('click', function (e) {
+                convertCss($(this).val(), $img);
+            });
+            var animations = {
+                "animation-name": ["rainbow"],
+                "animation-duration": ["0", "-2s", "3s"],
+                "animation-timing-function": ["ease", "ease-in", "ease-out", "ease-in-out", "linear", "cubic-bezier(.83,.97,.05,1.44)"],
+                "animation-delay": ["0", "-2s", "3s"],
+                "animation-iteration-count": [1, 3, 'infinite'],
+                "animation-direction": ['normal', 'alternate'],
+                "animation-play-state": ['running', 'paused'],
+                "animation-fill-mode":['none','forwards','backwards','both']
+            }
+            var $selectors = $("#selectors");
+            for (var key in animations) {
+                keys.push(key);
+                var values = animations[key];
+                $selectors.append(createSelector(key, values));
+            }
+            var getStyle = function () {
+                //return keyBtns.reduce(function (previousValue, currentValue, index, array) {
+                //    console.log(currentValue.val());
+                //    return previousValue +currentValue.val();
+                //},[]);
+                return keyBtns.map(function (item) {
+                    var val = item.val(); console.log(val + " ; -webkit-" + val +"; ");
+                    return " -webkit-" + val + "; " +val + "; "  ;
+                });
+            }
+            $("#action").on('click', function () {
+                var sheet = document.styleSheets[0];
+                addRules(sheet, '.atDiv:hover',''+ getStyle().join(" ") );
+                //addStyles('#atDiv div .atDiv:hover', getStyle().join(" ; ") + " ;");
+                 //addStyles("div", "color:red");
+                //addRules(sheet,'div:hover','color:red');
+            });
+        });
+        function convertCss(css,$target) {
+            var cssAry = css.split(":");
+            $target.css('transition',css.replace(/(?:transition:)\s*(.*)/,"$1"));
+            //$target.css(cssAry);
+        }
+        function createBtn(css){
+            return $("<input type='button' value='"+css+"' >");
+        }
+        function createSelector(key,values) {
+            var div = $("<div style='display:inline-block;padding:2px;border:1px solid;margin-left:2px;' >"), $selector = $("<select>");
+            values.forEach(function (val) {
+                $selector.append(createOptions(key, val));
+            });
+            div.append($("<label>" + key + "</label><br>")).append($selector);
+            keyBtns.push($selector);
+            return div;
+        }
+        function createOptions(key, val) {
+            var value = ""+key + ":" + val+"";
+            return $("<option value= '" + value + "'>" + val + "</options>");
+        }
+
+        function addRules(sheet,selector,styles) {
+            if (!sheet) return;
+            try{
+                if (sheet.insertRule) return sheet.insertRule(selector + " {" + styles + "}", sheet.cssRules.length);
+                if (sheet.addRule) return sheet.addRule(selector, styles);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        function addStyles(selector, styles) {
+            var styleEl = document.createElement('style'),
+             styleSheet;
+
+            // Apparently some version of Safari needs the following line? I dunno.
+            styleEl.appendChild(document.createTextNode(''));
+            //styleEl.id = "test";
+
+            // Grab style sheet
+            styleSheet = styleEl.sheet;
+            addRules(styleSheet, selector, styles);
+            // Append style element to head
+            document.head.appendChild(styleEl);
+        }
+    </script>
+</head>
+<body >
+<div class='body'>
+<header> <p>Css3 动画效果。 From：<cite  ><a href='http://www.ruanyifeng.com/blog/2014/02/css_transition_and_animation.html'>阮一峰博客</a></cite></p></header>
+<section >
+<h3>CSS Transition</h3>
+<div id='buttons' ><p>请点击相应button，鼠标悬浮图片，查看效果。 </p></div>
+<a style='display:block' href='http://cubic-bezier.com/' >cubic-bezier工具网站</a>
+<div class="imgDiv">
+<div id='img' class='img' />
+</div>
+</section>
+<section>
+<h3>CSS Animation</h3>
+<div ><!--style="display:inline-block"> -->
+<article> 
+<div id='selectors' ></div><input type="button" id='action' value='action' />
+    <div id="atDiv" class="atDiv"></div>
+</article>
+</div>
+</section>
+<footer style="margin-top:20px;font-family:'Comic Sans MS', cursive; text-align:center"><p> :P My test</p></footer>
+</div>
+</body>
+</html>
