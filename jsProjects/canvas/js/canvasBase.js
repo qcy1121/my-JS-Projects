@@ -2,7 +2,7 @@ require.config({
     baseUrl: "../../lib",
     paths: {
         "jquery": "jquery",
-        "dataApi":"../webApi/dataApi",
+        "dataApi":"../webApi/dataApi"
     }
 });
 

@@ -293,8 +293,8 @@ var GridView = (function() {
 				}
 			}
 
-			underlay.css({width:table.width(),height:table.height(),position:"absolute",top:"0px",left:"0px"}).fadeOut("100");
-
+			//underlay.css({width:table.width(),height:table.height(),position:"absolute",top:"0px",left:"0px"}).fadeOut("100");
+            underlay.fadeOut('100');
 			this.underlay = underlay;
 			this.table = table;
 			//this.changeZoom();
@@ -337,7 +337,7 @@ var GridView = (function() {
 			this.drawPath(path);
 			this.hidSelected(this.selectedCell,cell);
 
-			this.timeObj.time2 =this.timeObj.shorttime;
+			this.timeObj.time2 =this.timeObj.shortTime;
 			this.removeHighlightCells();
 			if(this.bigLevel)this.refresh();
 			this.checkDeadLock();
@@ -478,7 +478,7 @@ var GridView = (function() {
 		},
 		initTimer:function(){
 			this.cleanTimer();
-			this.timeObj.time1= this.timeObj.maxtime;
+			this.timeObj.time1= this.timeObj.maxTime;
 			this.timeObj.time2 = 0;
 			this.startTimer();
 		},

@@ -1,5 +1,5 @@
-require(["jquery","jui"],function($){
-
+define(['exports',"jquery","jui"],function(exports, $,$u){
+var jui = (function(){
 var $alert,$content,$okBtn,alertFunc=function(arg){
 	var $defer = $.Deferred();
 	if(!$alert){
@@ -52,6 +52,60 @@ var confirmFunc = function(str){
 	
  return new jconfirm(str);
 };
-window.jconfirm = confirmFunc;
 
-})();
+    var buildUI = (function () {
+        var progressbarOptions = {
+            opts: {
+                max: 100,
+                value: 0
+            }
+        };
+        $.fn.extend({
+            isDisabled: function () {
+                var css = this.classList;
+                var disableReg = /\bdisabled\b/;
+                return disableReg.test(css);
+            }, setDisabled: function (disabled) {
+                var _this = $(this);
+                disabled && _this.addClass('disabled') || _this.removeClass("disabled");
+                return this;
+            }, progressbar: function () {
+                var self = $(this);
+                if (self.get(0).tagName.toLowerCase() !== 'progress') {
+                    throw "This tag is not a progress";
+                    return;
+                }
+                var args = arguments,
+                    setOptions = function (key, value) {
+                        self.attr(key, value);
+                    };
+                if (typeof args[0] == 'string') {
+                    setOptions(args[0], args[1]);
+                } else {
+                    var options = progressbarOptions.opts;
+                    options = $.extend(options, args[0]);
+                    for (var i in options) {
+                        self.attr(i, options[i]);
+                    }
+                }
+                return this;
+            }
+        });
+    })();
+//cssHooks
+    $.cssHooks.transform = {
+        set:function(value){
+            var scales = value;
+//            {
+//            '-moz-transform': scales,
+//            '-ms-transform': scales,
+//            '-webkit-transform': scales
+//            }
+        }
+    }
+    return {
+        jconfirm : confirmFunc
+    }
+})()
+    exports.jutils =jui;
+})

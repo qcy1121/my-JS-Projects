@@ -1,11 +1,8 @@
 
-html{
-    height:99%;
-}
-*{border:red 1px solid;}
-body{
+/**{border:red 1px solid;}*/
+body,html{
 
-    height:99%;
+    height:100%;
 }
 .barTable{
     /*position:relative;
@@ -29,16 +26,27 @@ body{
 }
 .timeBarLeft{
     /*right:31%;*/
-    width:69%;
+    width:70%;
 }
 .timeBarRight{
     width:29%;
     /*left:71%;*/
 }
-.ui-progressbar.progressBar {
-    height:1em;
+.progressBar {
+    background-color: #f3f3f3;
+    border: 1px solid;
+    width: auto;
+    height:1.2em;
+    display:block;
+    border-radius: 9px;
     /*width:100%;
     position: absolute;*/
+}
+.timeBarLeft .progressBar{
+    margin-left:6em;
+}
+.timeBarRight .progressBar{
+    margin-left:4em;
 }
 .red .ui-widget-header{
     background:red;
@@ -50,11 +58,6 @@ body{
     margin-left: 4em;
     position:relative;
     height: 100%;
-}
-.clearfix:after {
-    clear: both;
-    content: "";
-    visibility: hidden;
 }
 
 .outDiv{
@@ -69,13 +72,26 @@ body{
     box-sizing: border-box;
 
 }
+.disabled{
+    opacity: 0.5;
+}
+.aButton{
+    margin:20px 2px;
+    height:2.9em;
+}
 .myButtonDiv {
    float:left;
     width:3em;
+    height:3em;
+}
+
+.myButtonDiv .aButton{
+    display:block;
 }
 
 .gridTable{
     margin: 0 .5em 0 0;
+    height:99%;
 }
 .gridCell {
 	/*
@@ -125,11 +141,12 @@ body{
 }*/
 .underlay{
 	background: gray;
+    width:100%;
+    height:100%;
     position: absolute;
     top:0px;
     left:0px;
 	z-index:100;
-    padding:10px 0;
 }
 .imgCell {
 	border-radius: 11px;
@@ -178,43 +195,27 @@ body{
 .highlight {
 	background: yellow;
 }
-/* icon start */
-.ui-button.ui-button-block{
-	/*display:block;*/
-	margin:20px 2px;
-    width:2.5em;
-    height:2.5em;
-	/* width:42px;
-	height:42px;
-	top:4px;
-	left:4px;
-	margin:0px; */
+.my-icon{
+    background-repeat:space;
 }
-.ui-button.ui-widget.ui-button-icon-only .ui-icon.my-ui-icon{
-    width:100%;
-    height:100%;
-    top:0px;
-	left:0px;
-	margin:0px;
-} 
-.ui-button .ui-icon.my-ui-icon-run-01{
+.my-ui-icon-run-01{
 	background-image: url(../svg/run.svg);
 }
-.ui-button .ui-icon.my-ui-icon-hint-01{
+.my-ui-icon-hint-01{
 	background-image: url(../svg/info.svg);
 }
 
-.ui-button .ui-icon.my-ui-icon-word-01{
+.my-ui-icon-word-01{
 	background-image: url(../svg/word.svg);
 }
 
-.ui-button .ui-icon.my-ui-icon-refresh-01{
+.my-ui-icon-refresh-01{
 	background-image: url(../svg/refresh.svg);
 }
-.ui-button .ui-icon.my-ui-icon-lock-01{
+.my-ui-icon-lock-01{
 	background-image:url(../svg/lock.svg);
 }
-.ui-button .ui-icon.my-ui-icon-unlock-01{
+.my-ui-icon-unlock-01{
 	background-image:url(../svg/unlock.svg);
 }
 

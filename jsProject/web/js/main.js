@@ -9,8 +9,8 @@ require.config({
 	}
 });
 
-	require(['jquery', "app/llk", "app/data",'jui', 'app/jutils'], function ($, llk,data) {
-
+	require(['jquery', "app/llk", "app/data", 'app/jutils'], function ($, llk,data,jui) {
+        var jConfirm = jui.jutils.jconfirm;
 	    var gridView, $out = $("#outDiv"),$myButtonDiv=$("#myButtonDiv");
 	    var $tableDiv = $("#tableDiv");//.addClass("tableDiv");//.width(rightWidth);
 
@@ -18,9 +18,9 @@ require.config({
 
 	    var maxtime = 100,
 	    	storage = new data.StorageApi()||{},
-	        time, shorttime = 3,
-	        islocked = false,
-            $timeBar=$("#timeBar"),$awardBar=$("#awardBar"),$links=$("#links"),$timeLeft=$("#timeleft"),
+	        time, shortTime = 3,
+	        isLocked = false,
+            $timeBar=$("#timeBar"),$awardBar=$("#awardBar"),$links=$("#links"),$timeLeft=$("#timeleft"),$lock=$("#lock"),
 	        timerCallback = function () {
 	            $timeBar.progressbar("value", this.time1);
 	            $awardBar.progressbar("value", this.time2);
@@ -38,8 +38,8 @@ require.config({
 	        };
 
 	    var timeObj = {
-	        maxtime: maxtime,
-	        shorttime: shorttime,
+	        maxTime: maxtime,
+	        shortTime: shortTime,
 	        time1: maxtime,
 	        time2: 0,
 	        timerCallback: timerCallback
@@ -85,9 +85,6 @@ require.config({
                 scales = 'scale('+xScale+","+yScale+");";
 
             var css={
-                '-moz-transform': scales,
-                '-ms-transform': scales,
-                '-webkit-transform': scales,
                 'transform': scales
         }
             $tableDiv.css(css);
@@ -97,7 +94,7 @@ require.config({
 	    };
 	    var hint = function () {
 	    	var str= "hintCount",i = storage.getItem(str),i=i||0;
-	    	jconfirm("一共使用了"+ i +"次提示，继续使用提示吗？").then(function(res){
+	    	jConfirm("一共使用了"+ i +"次提示，继续使用提示吗？").then(function(res){
                 if(res){gridView.hint();storage.setItem(str,++i);}
             });
 	       // gridView.hint();
@@ -105,75 +102,43 @@ require.config({
 	    };
 
 	    var lock = function () {
-	        if (islocked) {
+	        if (isLocked) {
 	            enableBtn();
 	            gridView.goon();
-	            islocked = false;
-	            $("#lock").button("option", "icons", {
-	                primary: "my-ui-icon-unlock-01 my-ui-icon"
-	            });
+	            isLocked = false;
+	            $lock.removeClass("my-ui-icon-unlock-01").addClass("my-ui-icon-lock-01");
 	        } else {
 	            disableBtn();
 	            gridView.pause();
-	            islocked = true;
-	            $("#lock").button("option", "icons", {
-	                primary: "my-ui-icon-lock-01 my-ui-icon"
-	            });
+	            isLocked = true;
+	            $lock.removeClass("my-ui-icon-lock-01").addClass("my-ui-icon-unlock-01");
 	        }
 	    };
 	    var show = function () {
-	        $("#draw").button({
-	            icons: {
-	                primary: "my-ui-icon-run-01 my-ui-icon"
-	            },
-	            text: false
-	        }).click(draw);
-	        $("#drawWords").button({
-	            icons: {
-	                primary: "my-ui-icon-word-01 my-ui-icon"
-	            },
-	            text: false
-	        }).click(drawWords);
-	        $("#refresh").button({
-	            icons: {
-	                primary: "my-ui-icon-refresh-01 my-ui-icon"
-	            },
-	            disabled: true,
-	            text: false
-	        }).click(refresh);
-	        $("#hint").button({
-	            icons: {
-	                primary: "my-ui-icon-hint-01 my-ui-icon"
-	            },
-	            disabled: true,
-	            text: false
-	        }).click(hint);
-	        $("#lock").button({
-	            icons: {
-	                primary: "my-ui-icon-lock-01 my-ui-icon"
-	            },
-	            disabled: true,
-	            text: false
-	        }).click(lock);
-	        $("#draw,#drawWords,#refresh,#hint,#lock").addClass("ui-button-block");
+	        $("#draw").addClass("my-ui-icon-run-01").on("click",draw);
+	        $("#drawWords").addClass("my-ui-icon-word-01").on("click",drawWords);
+	        $("#refresh").addClass("my-ui-icon-refresh-01").on("click",refresh).setDisabled(true);
+	        $("#hint").addClass("my-ui-icon-hint-01").on("click",hint).setDisabled(true);
+	        $lock.addClass("my-ui-icon-lock-01").on("click",lock).setDisabled(true);
+	       // $("#draw,#drawWords,#refresh,#hint,#lock").addClass("ui-button-block");
             $timeBar.progressbar({
 	            max: maxtime,
 	            value: maxtime
 	        });//.addClass("timeBar");
 	        $awardBar.progressbar({
-	            max: shorttime,
+	            max: shortTime,
 	            value: 0
 	        });//.addClass("awardBar");
 
 	    };
 
 	    function enableBtn() {
-	        $("#hint,#refresh,#lock").button("enable");
-	        islocked = false;
+	        $("#hint,#refresh,#lock").setDisabled(false);
+	        isLocked = false;
 	    };
 
 	    function disableBtn() {
-	        $("#hint,#refresh").button("disable");
+	        $("#hint,#refresh").setDisabled(true);//("disable");
 	    }
 
 	    $(document).ready(function () {
