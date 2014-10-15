@@ -566,7 +566,7 @@ var GridView = (function() {
 		},
 		gameover:function(){
 			
-			this.underlay.fadeIn("100").html("<div style='font-size:20px' >GAME OVER</div>");
+			this.underlay.fadeIn("100").html("<span class='gameOver' >GAME OVER</span>");
 			this.destroy();
 		},
 		destroy:function(){

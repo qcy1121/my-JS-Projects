@@ -148,6 +148,15 @@ body,html{
     left:0px;
 	z-index:100;
 }
+.gameOver{
+    color:#ffffff;
+    font-size:5em;
+    width:6.4em;
+    display:block;
+    position:relative;
+    top:45%;
+    margin:0 auto;
+}
 .imgCell {
 	border-radius: 11px;
 	/*border-top: 1px solid #575456;*/
@@ -186,9 +195,8 @@ body,html{
 */
 .selected {
 	filter: Gray;
-	border: 1px solid;
+	border: 1px solid yellow;
 	padding: 2px;
-	border-color: yellow;
 	background-color: #1b435e;
 }
 
