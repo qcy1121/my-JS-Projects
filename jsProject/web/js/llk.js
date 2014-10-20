@@ -76,9 +76,9 @@ var WordCell = (function(_super){
 
 var resource = (function(){
 	var _resource = function(audio,images){
-		this._audio = audio?audio: {flip: '../audio/audio-flip.ogg',
-		        link:'../audio/audio-link.ogg',
-		        beep: '../audio/audio-beep.ogg'};
+		this._audio = audio?audio: {flip: '../audio/audio-flip.mp3',
+		        link:'../audio/audio-link.mp3',
+		        beep: '../audio/audio-beep.mp3'};
 		this._images =images?images:{
 			
 		};
@@ -104,6 +104,7 @@ exports.resource = resource;
 
 // the grid
 var GridView = (function() {
+
 	function GridView(parent,opts) {
 		this.grid = null;
 		this.cells=null;
@@ -128,14 +129,15 @@ var GridView = (function() {
 		this.xNum =  10; // rows of view table
 		this.yNum =  5; // columns of view table
 		this.level = opts.level?opts.level:1;
-		this.bigLevel = 0;
+        this.maxLevel = 7;
+		//this.bigLevel = 0;
 		this.baseNum =10;
 		this.imgNum=this.level*2+this.baseNum;
 		this.stop=false;
 		this.zoom=1;
 		this.over = false;
 		this.resource = opts.resource?opts.resource:(new resource()).load();
-		this.levels = [
+		/*this.levels = [
 						{y:6,x:6},
 						{y:6,x:7},
 						{y:6,x:8},
@@ -149,16 +151,44 @@ var GridView = (function() {
 						{y:7,x:14},
 	        			{y:7,x:15}
 	        	            ];
+	        	            */
 	};
-	
+
+    var helper = {
+        getNums:function(w,h,b,num){
+            var isW = w> h,//is width>height
+                rate=isW?w/h:h/ w;//the rate of width and height
+            return isW?{x:10,y:8}:{x:8,y:10};
+            //num = num===undefined?100:num;
+           // for(var i=2;i<num;)
+
+             //   var x=~~(w/ b),y=~~(h/b);
+           // return {x:x,y:y};
+        },
+        value:0,
+        getValue:function(){
+           if(this.value)return this.value;
+//           var $temp = $("<div class='gridCell'><div class='imgCell'></div></div>");
+//
+//
+//
+//
+//            document.body.appendChild($temp[0]);
+//            this.value = $temp.width();
+//            $temp.remove();
+            this.value=1;
+            console.log(this.value);
+            return this.value;
+        }
+    }
 	
 	
 	GridView.prototype = {
 		calculateLevel:function(){
-            this.level>this.levels.length&&(alert("你通关了，再通一次吧！"),this.level=1);
-			var levelVal =  this.levels[this.level-1];
-			this.xNum = levelVal.x; // rows of view table
-			this.yNum =  levelVal.y; // columns of view table
+            this.level>this.maxLevel&&(alert("你通关了，再通一次吧！"),this.level=1);
+			//var levelVal =  this.levels[this.level-1];
+			//this.xNum = levelVal.x; // rows of view table
+			//this.yNum =  levelVal.y; // columns of view table
 			/*if(this.xNum * this.yNum %2){
 				alert(" Wrong xNumber or yNumber");
 				this.xNum = 10;
@@ -215,16 +245,16 @@ var GridView = (function() {
 			}
 		},
 		initImgs:function(path,num){
-			
-			if(num>32){
-				num=32;
-				console.warn("nums is bigger than existing imgs");
-			}
+			var data = llkData.llkData;
+			//if(num>data.size){
+				num=data.size;
+			//	console.warn("num is bigger than existing imgs");
+			//}
 			this.imgs = [];
 			for(var i=0;i<num;i++){
 				//var img = path+"/llk_"+i+".gif";
                 //utils.ImageTool.logBase64ByImagePath(img);
-                var img = llkData.llkData.getImage(i);
+                var img = data.getImage(i);
 				this.imgs.push(img);
 			}
 		},
@@ -302,19 +332,19 @@ var GridView = (function() {
 		changeZoom :function(){
 			var width = this.table.width(),
 			zoom = this.outwidth/width;
-			this.setZoom(zoom);
+			//this.setZoom(zoom);
 		},
 		setZoom:function(zoom){
-			var css ;
-			if(typeof zoom == "object"){
-				var x = zoom.x,y=zoom.y;
-				css = {"-webkit-transform": "scale("+x+","+y+")", "-ms-transform": "scale("+x+","+y+")","transform": "scale("+x+","+y+")"};
-				
-			}else{
-				css = {"zoom":zoom};
-			}
-			this.table.css(css);
-			this.underlay.css(css);
+//			var css ;
+//			if(typeof zoom == "object"){
+//				var x = zoom.x,y=zoom.y;
+//				css = {"-webkit-transform": "scale("+x+","+y+")", "-ms-transform": "scale("+x+","+y+")","transform": "scale("+x+","+y+")"};
+//
+//			}else{
+//				css = {"zoom":zoom};
+//			}
+//			this.table.css(css);
+//			this.underlay.css(css);
 		},
 		onClick:function(cell/*cell*/){
 			//TODO
@@ -451,6 +481,7 @@ var GridView = (function() {
 		},
 		render : function(level) {
 			this.level = level?level:this.level;
+            this.calculateLength();
 			this.calculateLevel();
 			this.selfInit();
 			this.initGridArray();
@@ -458,8 +489,13 @@ var GridView = (function() {
 			this.drawGrid();
 			this.initTimer();
 		},
+        calculateLength:function(){
+            var baseLen = helper.getValue(),parent = this.parentElement,pw = parent.width(),ph = parent.height();
+            var xyObj = helper.getNums(pw,ph,baseLen);
+            this.xNum=xyObj.x,this.yNum = xyObj.y;
+        },
 		renderHighLevel:function(){
-			if(this.level>this.levels.length){
+			if(this.level>this.maxLevel){
 				this.level = 1;
 				this.bigLevel = 2;
 			}else{ 
@@ -474,7 +510,7 @@ var GridView = (function() {
 
 		selfInit:function(){
 			var path = this.basePath+"../images";
-			this.initImgs(path,31);
+			this.initImgs(path);
 		},
 		initTimer:function(){
 			this.cleanTimer();
@@ -566,7 +602,7 @@ var GridView = (function() {
 		},
 		gameover:function(){
 			
-			this.underlay.fadeIn("100").html("<span class='gameOver' >GAME OVER</span>");
+			this.underlay.fadeIn("100").html("<div class='gameOver' >GAME OVER</div>");
 			this.destroy();
 		},
 		destroy:function(){
