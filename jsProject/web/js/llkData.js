@@ -41,7 +41,14 @@ define(["exports","jquery"],function(exports,$){
             var len = imgData.length;
             idx = idx % len;
             return "data:image/gif;base64,"+imgData[idx];
-        }
+        };
+//        llkData.getImageLen = function(){
+//            return imagData.length;
+//        }
+        Object.defineProperty(llkData,'size',{
+            get:function(){return imgData.length;},
+            set:function(x){}
+        })
         return llkData;
 	})();
     exports.llkData = llkData;

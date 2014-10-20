@@ -10,9 +10,6 @@ define(['exports'],function(exports){
                 return this.map[this.convertKeyToProperty(key)];
             },
             set : function(key, value) {
-                if (!this.has(key)) {
-                    this.size++;
-                }
                 this.map[this.convertKeyToProperty(key)] = value;
             },
             has : function(key) {
@@ -63,7 +60,7 @@ define(['exports'],function(exports){
                 }
                 return true;
             },
-            length : function() {
+            size : function() {
                var size=0;
                 for(var i in this.map)size++;
                 return size;

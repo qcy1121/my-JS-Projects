@@ -87,7 +87,7 @@ require.config({
             var css={
                 'transform': scales
         }
-            $tableDiv.css(css);
+            //$tableDiv.css(css);
         };
 	    var refresh = function () {
 	        gridView.refresh();
