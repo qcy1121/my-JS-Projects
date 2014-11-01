@@ -1,2 +1,41 @@
-﻿body {
+﻿.nav{
+    width:20px;
+    position:fixed;
+    left:2px;
+    overflow:hidden;
+    background-color:green;
+    top:20%;
+    /*top:5%;bottom:5%;margin:auto 0;*/
+    text-align:right;
+}
+.nav:hover{
+    width:auto;
+    overflow:visible;
+}
+.navInner{
+    position:relative;
+    right:0px;
+    overflow:hidden;
+    /*width:20%;
+    margin-left:-80%;*/
+}
+/*.navInner::after{
+    content:'';
+    clear:both;
+    visibility:hidden;
+}*/
+/*.nav:hover .navInner{
+    margin-left:0;
+    width:auto;
+}*/
+.menu{
+    display:block;
+    list-style:circle;
+    border-bottom:1px solid red;
+    padding:4px;
+    float:right;
+    clear:both;
+}
+.menu:last-child{
+    border-bottom:0px;
 }

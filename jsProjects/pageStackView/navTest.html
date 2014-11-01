@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nav Test Page</title>
+        <script defer src='../lib/require.js' ></script>
+        <link href='./pageNav.css' rel="stylesheet" />
+        <script >
+            var load = function () {
+                require.config({
+                    baseUrl: "../lib",
+                    paths: {
+                        "jquery": "jquery",
+                        'web': "../webApi",
+                        "app": '../pageStackView'
+                    }
+                });
+                requirejs(['app/pageNav'], function (pageNav) {
+                    var page = new pageNav.pageNav();
+                    page.init();
+                });
+            }
+        </script>
+    </head>
+    <body onload='load()' >
+    </body>
+</html>
