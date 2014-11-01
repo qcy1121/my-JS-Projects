@@ -1,0 +1,142 @@
+﻿<!doctype html>
+<html>
+	<head>
+	<style>
+	*{border:1px red solid;}
+	.container{
+		padding-top:30px;
+		position:relative;
+		height:600px;
+		/*line-height:20px;*/
+	}
+	.container:before{
+		content:attr(title)':';
+		position:absolute;
+		top:0px;
+		left:0px;
+	}
+	.inner{
+		display:inline-block;
+	}
+	/*
+	body,html{
+		height:99%;
+	}
+	*/
+	.fill-height-or-more {
+		display: flex;
+		flex-direction: column;
+	}
+	.fill-height-or-more > div {
+		/* these are the flex items */
+		flex: 1;
+	}
+	.center-with-translate{
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		
+		/*
+		This doesn't work
+		margin-left: -25%;
+		margin-top: -25%;
+		*/
+		
+		width: 40%;
+		height: 50%;
+		
+		padding: 20px;  
+		background: red;
+		color: white;
+		text-align: left;
+		box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+	}
+	/* center unkonw */
+		.block {
+			text-align: center;
+			background: #c0c0c0;
+			border: #a0a0a0 solid 1px;
+			margin: 20px;
+		}
+		
+		.block:before {
+			content: '';
+			display: inline-block;
+			height: 100%; 
+			vertical-align: middle;
+			margin-right: -0.25em; /* Adjusts for spacing */
+			
+			/* For visualization 
+			background: #808080; width: 5px;
+			*/
+		}
+		
+		.centered {
+			display: inline-block;
+			vertical-align: middle;
+			width: 300px;
+			padding: 10px 15px;
+			border: #a0a0a0 solid 1px;
+			background: #f5f5f5;
+		}
+	/*center unkown end */
+	</style>
+	</head>
+	<body>
+	<div class='container' title="百分比" style='height:100px;'>
+		<div class='inner' style="width:69%;">
+		<div style="float:left;width:8rem;" >test &nbsp;</div><div style='background:red;display:block;margin-left:8rem' >red</div>
+		</div>
+		<div class='inner' style="width:29%;" >
+		<div style="float:left;width:16%;" >test &nbsp;</div><div style='background:green;display:block;margin-left:16%' >red</div>
+		</div>
+        <ul>
+        <li>div外层的父标签如果没有定义高度或宽度(用px或者其它单位定义，而非百分比)，div用百分比是无效的。如果坚持要用百分比，请换成table标签。</li>
+        <li>如果一定要用div标签，一种方法是通过JS脚本获取浏览器高度或宽度然后给标签，用纯CSS方法是这样：给inner加一条属性“position:absolute”。</li>
+        </ul>
+	</div>
+	<div class='container' title='center-with-translate'>
+		<div class="center-with-translate">
+		 <ul>
+			<li>不能用margin-left=-25%; margin-top:-25%;
+			<p>margin-left可以起作用，但是如果使用margin-top百分比的话，就会以宽度为基准，而不是长度。</p></li>
+			<li>补充：
+			<p>竖向属性padding-top,padding-bottom,margin-top,margin-bottom等，当按百分比设定它们时，依据的也是父容器的宽度，而不是高度。
+			</p></li>
+			<li>其他：
+            <p>
+                <cite><a href='http://css-tricks.com/centering-css-complete-guide'>居中显示向导（包括各种情形）</a></cite>
+            </p></li>
+		 </ul>
+		</div>
+	</div>
+	<div class='container' title='center-unkown' style='height:auto'>
+		<div class="block" style="height: 300px;">
+		
+			<div class="centered">
+				<h1>Some text</h1>
+				<p>But he stole up to us again, and suddenly clapping his hand on my shoulder, said&mdash;"Did ye see anything looking like men going towards that ship a while ago?"</p>
+			</div>
+    
+		</div>
+
+		<div class="block" style="height: 200px;">
+			
+			<div class="centered">
+				<h1>Some text</h1>
+				<p>But he stole up to us again, and suddenly clapping his hand on my shoulder, said&mdash;"Did ye see anything looking like men going towards that ship a while ago?"</p>
+			</div>
+			
+		</div>
+		
+		<div class="block" style="height: 500px;">
+			
+			<div class="centered">
+				<h1>Some text</h1>
+				<p>But he stole up to us again, and suddenly clapping his hand on my shoulder, said&mdash;"Did ye see anything looking like men going towards that ship a while ago?"</p>
+			</div>
+			
+		</div>
+	</div>
+	</body>

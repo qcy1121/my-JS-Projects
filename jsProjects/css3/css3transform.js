@@ -39,7 +39,7 @@ function afterRun() {
     var addRules =function(sheet, selector, styles) {
         if (!sheet) return;
         try {
-            if (sheet.insertRule) return sheet.insertRule(selector + " {" + styles + "}", sheet.cssRules.length);
+            if (sheet.insertRule) return sheet.insertRule(selector + " {" + styles + "}",( sheet.cssRules ? sheet.cssRules.length:0));
             if (sheet.addRule) return sheet.addRule(selector, styles);
         } catch (e) {
             console.log(e);

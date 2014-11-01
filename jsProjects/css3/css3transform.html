@@ -3,8 +3,6 @@
     <head>
         <title>css3 transform test</title>
         <!--<script type = "text/javascript" src = "../sit/js/vendor/jquery.min.1.11.1.js"></script>-->
-        <script type="text/javascript" src="../lib/jquery.js"></script>
-        <script type="text/javascript" src="css3transform.js"></script>
         <link type="text/css"  href='../css/base.css' rel="stylesheet" />
         <style>
            
@@ -49,7 +47,7 @@
                  counter-reset:sectioncounter;/*计数器*/
             }
             div#btns > div::after{
-                content: counter(sectioncounter) ': ('attr(data-name)')';
+                content: counter(sectioncounter) ': ('attr(data-name)')(number add by counter)';
                 counter-increment:sectioncounter;/**/
                 position:absolute;
                 top:0px;
@@ -80,5 +78,7 @@
     </div>
     </div>
     </div>
+        <script type="text/javascript" src="../lib/jquery.js"></script>
+        <script type="text/javascript" src="css3transform.js"></script>
     </body>
 </html>
