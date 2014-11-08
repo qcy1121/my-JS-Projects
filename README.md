@@ -1,4 +1,4 @@
-picture-matching
+#picture-matching
 ================
 
 a javascript version picture matching game.

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>chart2d</title>
+<link href="../../lib/dtkSDK/dijit/themes/claro/claro.css" rel="stylesheet" />
+<script>
+dojoConfig = {
+    //locale:'zh',
+    async: true,
+    baseUrl: './',
+    gfxRenderer: "svg", // svg gets priority
+    parseOnLoad: true,
+    packages: [
+        { name: "dojo", location: '../../lib/dtkSDK/dojo' },
+        { name: "dijit", location: '../../lib/dtkSDK/dijit' },
+        { name: "dojox", location: '../../lib/dtkSDK/dojox' },
+        { name: "put-selector", location: '../../lib/dtkSDK/put-selector' },
+        { name: "xstyle", location: '../../lib/dtkSDK/xstyle' },
+        { name: "app", location: "./app" }
+    ]
+};
+</script>
+
+<script src='../../lib/dtkSDK/dojo/dojo.js'></script>
+</head>
+<body class='claro' >
+<div id='buttonDiv'>
+    
+</div>
+<div id = "simpleChart" style="width:700px;height:700px;"></div>
+<div id="legend1" style="width:700px;height:50px" ></div>
+<script type="text/javascript">
+    require(["dojo/dom","dijit/form/Select","dijit/form/Button","app/chart2d"], function (dom,Select,Button,chart2d) {
+        var btnDiv = dom.byId('buttonDiv'), chartType = ['Columns', 'Lines', 'Bars', 'Bubble', 'StackedAreas', 'StackedColumns', 'StackedBars', 'ClusteredColumns', 'ClusteredBars'], chart,
+        drawChart = function(){
+            var type = selector.get('value');
+            !chart&& (chart = new chart2d());
+            var div = dom.byId("simpleChart"),legend=dom.byId("legend1");
+            div.innerHTML = ''; legend.innerHTML = '';
+            chart.draw(div,type);
+        }
+        var selector = new Select({
+            id: 'chartType',
+            options: chartType.map(function (item) { return { label: item, value: item }; }),
+        }),
+        btnApply = new Button({
+            id: 'apply',
+            label:'apply',
+            onClick:drawChart,
+            style:'margin-left:20px;'
+        });
+        btnDiv.appendChild(selector.domNode);
+        btnDiv.appendChild(btnApply.domNode);
+});
+	
+</script>
+</body>
+</html>
