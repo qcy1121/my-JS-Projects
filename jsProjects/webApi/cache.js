@@ -47,7 +47,7 @@
                 if (!this.deferred) {
                     this.deferred = $.deferred();
                     if (this.cachedResult == null) {
-                        createAsyncCallback(this.cachePath).then(function (result) {
+                        createAsyncCallback(this.cachePath).done(function (result) {
                             return _this.setCachedResult(result);
                         }, function (err) {
                             return _this.deferred.reject(err);

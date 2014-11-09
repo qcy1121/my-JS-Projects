@@ -2,9 +2,8 @@
 <html>
     <head>
         <title>canvas base</title>
-        <link type="text/css"  href='../../../css/base.css' rel="stylesheet" />
-        <script type="text/javascript" src="../../../lib/require.js" ></script>
-        <script type="text/javascript" src="../js/canvasBase.js" ></script>
+        <link type="text/css"  href='../../css/base.css' rel="stylesheet" />
+        <script type="text/javascript" src="../../lib/require.js" ></script>
         <style>
 
             .showDiv{
@@ -29,5 +28,17 @@
         
     </div>
     </div>
+    <script>
+        require.config({
+            baseUrl: "../../lib",
+            paths: {
+                "jquery": "jquery",
+                "app":"../canvas/js"
+            }
+        });
+        require(['app/canvasBase'],function(app){
+            app.run();
+        });
+    </script>
     </body>
 </html>

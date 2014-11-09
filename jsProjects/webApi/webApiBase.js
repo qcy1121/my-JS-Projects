@@ -1,39 +1,44 @@
 ﻿define(['exports', 'jquery'], function (exports, $) {
-    var _extends = function (c, p) {
-        for (var i in p) {
-            if (p.hasOwnProperty(i)) {
-                c[i] = p[i];
-            }
-        }
-        var _t = function () { this.constructor = p };
-        _t.prototype = p.prototype;
-        c.prototype = new _t();
-    }
-    exports._extends = _extends;
-    var webApiBase = (function () {
-        function webApi(url) {
+    
+    var WebApi = (function () {
+        function WebApi(url) {
             this.baseUrl = url;
         }
-        webApi.prototype = {
-
+        
+        WebApi.getInstance = function (url) {
+            return WebApiFactory.getInstance(url,this);//todo .Need to mark sure why it can work and it's right or wrong.
         }
-        return webApi;
+        WebApi.prototype = {
+            getJsonData: function (url) {
+                var data, deferrd = $.Deferred();
+                $.get(url).done(function (resData) {
+
+                    deferrd.resolve(resData);
+                }).fail(function (e) {
+                    deferrd.reject(e);
+                });
+
+                return deferrd.promise();
+            }
+        }
+        return WebApi;
     })();
 
-    var webApiFactory = (function () {
+    var WebApiFactory = (function () {
         function factory () {
 
         }
         var apiCache = Object.create(null);
-        factory.createWebApi = function (baseUrl) {
+        factory.getInstance = function (baseUrl,constructorFun) {
             if (!apiCache[baseUrl]) {
-                var webApi = new webApiBase(baseUrl);
+                var webApi = new constructorFun(baseUrl);
                 apiCache[baseUrl] = webApi;
             }
             return apiCache[baseUrl];
         }
+        return factory;
     })();
 
-    exports.webApiBase = webApiBase;
-    exports.webApiFactory = webApiFactory;
+    exports.WebApi = WebApi;
+    exports.WebApiFactory = WebApiFactory;
 });

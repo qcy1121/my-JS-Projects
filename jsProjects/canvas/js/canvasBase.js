@@ -1,12 +1,5 @@
-require.config({
-    baseUrl: "../../../lib",
-    paths: {
-        "jquery": "jquery",
-        "dataApi":"../webApi/dataApi"
-    }
-});
 
-require(['jquery', 'dataApi'], function ( $, dataApi) {
+define(['jquery'], function ( $) {
     var CanvasTool = (function () {
         var CanvasTool = function () { };
         var $showDiv = $("#showDiv");
@@ -134,11 +127,13 @@ require(['jquery', 'dataApi'], function ( $, dataApi) {
 
     }
     //exports.CanvasStudy = CanvasStudy;
-    $(function () {
-        for (var i in CanvasStudy) {
-            var fn = CanvasStudy[i];
-            fn();
+    return {
+        run: function () {
+            for (var i in CanvasStudy) {
+                var fn = CanvasStudy[i];
+                fn();
+            }
         }
-    });
+    }
 });
 

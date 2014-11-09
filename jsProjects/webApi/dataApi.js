@@ -1,33 +1,29 @@
 
-define(['exports','jquery','web/webApiBase'], function (exports,$,webApiBase) {
-    var webApi = webApiBase.webApiBase;
-    var dataApi = (function () {
-        var dataApi = function () {
-
+define(['exports','web/storageWebApi'], function (exports,sessionApi) {
+    var WebApi = sessionApi.SessionApi;
+    var DataApi = (function () {
+        var DataApi = function (url) {
+            this.baseUrl = url;
 
         }
-        var dataApiInstance = null;
-        dataApi.getInstance = function () {
-            if (!dataApiInstance) {
-                dataApiInstance = new dataApi();
+        var DataApiInstance = null;
+        DataApi.getInstance = function (url) {
+            if (!DataApiInstance) {
+                DataApiInstance = new DataApi(url);
             }
-            return dataApiInstance;
+            return DataApiInstance;
 
         }
 
-        dataApi.prototype = {
+        DataApi.prototype = {
             loadTreeMap: function (url) {
-                //todo: mock data
-                var data = {
-                    'menu1testsdfd': './test',
-                    'menu2': './test'
-                }, deferrd = $.Deferred();
-                deferrd.resolve(data);
-                return deferrd.promise();
+                var path = this.baseUrl + "/webApi/data.js";
+                var api = WebApi.getInstance(this.baseUrl);
+                return api.getJsonData(path);
             }
         }
-        return dataApi;
+        return DataApi;
     })();
 
-    exports.dataApi = dataApi;
+    exports.DataApi = DataApi;
 }); 

@@ -63,8 +63,19 @@
 
         return Utils;
     })();
+    var _extends = function (c, p) {
+        
+        for (var i in p) {
+            if (p.hasOwnProperty(i)) {
+                c[i] = p[i];
+            }
+        }
+        function _t () { this.constructor = p };
+        _t.prototype = p.prototype;
+        c.prototype = new _t();
+    }
 
 
-
+    exports._extends = _extends;
     exports.Utils = Utils;
 });
