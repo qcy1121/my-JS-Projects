@@ -1,0 +1,239 @@
+
+/**{border:red 1px solid;}*/
+body,html{
+
+    height:100%;
+}
+.barTable{
+    /*position:relative;
+    width:100%;
+    margin:0 auto;*/
+    height:2rem;
+}
+.timeBarContent{
+    /*position:absolute;
+    top:0.5em;
+    margin:0px;*/
+    display:inline-block;
+}
+.timeLeft{
+    /*min-width:10px;*/
+    float:left;
+    width:6rem;
+}
+.timeBarRight .timeLeft{
+    width:4rem;
+}
+.timeBarLeft{
+    /*right:31%;*/
+    width:70%;
+}
+.timeBarRight{
+    width:29%;
+    /*left:71%;*/
+}
+.progressBar {
+    background-color: #f3f3f3;
+    border: 1px solid;
+    width: auto;
+    height:1.2rem;
+    display:block;
+    border-radius: 9px;
+    /*width:100%;
+    position: absolute;*/
+}
+.timeBarLeft .progressBar{
+    margin-left:6rem;
+}
+.timeBarRight .progressBar{
+    margin-left:4rem;
+}
+.red .ui-widget-header{
+    background:red;
+}
+.tableDiv {
+	border-collapse: collapse;
+	background-color: white;
+	border-radius: 10px;
+    margin-left: 4rem;
+    position:relative;
+    height: 100%;
+}
+
+.outDiv{
+    box-sizing: border-box;
+    padding:20px;
+    height: 100%;
+}
+.content{
+    margin-top:-2rem;
+    padding-top:2rem;
+    height: 100%;
+    box-sizing: border-box;
+
+}
+.disabled{
+    opacity: 0.5;
+}
+.aButton{
+    margin:20px 2px;
+    height:2.9rem;
+}
+.myButtonDiv {
+   float:left;
+    width:3rem;
+    height:3rem;
+}
+
+.myButtonDiv .aButton{
+    display:block;
+}
+
+.gridTable{
+    margin: 0 .5rem 0 0;
+    height:99%;
+}
+.gridCell {
+	/*
+	border: solid #ccc 1px;
+	
+	height: 36px;
+	width: 36px;
+	*/
+    /*margin:.5em;*/
+    float:left;
+	cursor: pointer;
+	/*padding: 2px;*/
+    height: 3rem;
+    width: 3rem;
+    overflow:hidden;
+}
+.gridRow{
+    margin-bottom:.1rem;
+    overflow:hidden;
+}
+.gridCell img,
+.gridCell .imgCell{
+
+	/*
+	border: solid #fff 3px;
+	
+	  filter: alpha(opacity=80);
+	  -moz-opacity: 0.8;
+	  opacity: 0.8;
+	  */
+    width:2.5rem;
+    height:2.5rem;
+    text-align:center;
+    vertical-align:middle;
+}
+.imgCell{
+    /*display:inline;*/
+}
+
+/*.ui-progressbar.timeBar{
+	
+	width:65%;
+	height:15px;
+	display:inline;
+}
+.ui-progressbar.awardBar{
+	
+	width:10%;
+	height:15px;
+	display:block;
+}*/
+/*.tableDiv{
+	position:relative;
+}*/
+.underlay{
+	background: gray;
+    width:100%;
+    height:100%;
+    position: absolute;
+    top:0px;
+    left:0px;
+	z-index:100;
+}
+.gameOver{
+    color:#ffffff;
+    font-size:5rem;
+    width:15rem;
+    position:relative;
+    top:40%;
+    margin:0 auto;
+}
+.imgCell {
+	border-radius: 11px;
+	/*border-top: 1px solid #575456;*/
+	background: #7b7f82;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc),
+		to(#7b7f82));
+	background: -webkit-linear-gradient(top, #fcfcfc, #7b7f82);
+	background: -moz-linear-gradient(top, #fcfcfc, #7b7f82);
+	background: -ms-linear-gradient(top, #fcfcfc, #7b7f82);
+	background: -o-linear-gradient(top, #fcfcfc, #7b7f82);
+	padding: 3px;
+	-webkit-border-radius: 11px;
+	-moz-border-radius: 11px;
+	border-radius: 11px;
+	-webkit-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	-moz-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	text-shadow: rgba(0, 0, 0, .4) 0 1px 0;
+	color: darkgreen; /*purple;*/
+	font-size: 36px;
+	font-family: \534E\6587\7425\73C0; /* �������� */ /* Georgia, serif;*/
+	text-decoration: none;
+}    
+
+.imgCell:hover {
+	/*border-top-color: #686969;*/
+	background: #686969;
+	color: #ccc;
+}
+/*
+.imgCell:active {
+	border-top-color: #1b435e;
+	background: #1b435e;
+}
+*/
+.selected {
+	border: 2px solid yellow;
+	padding: 1px;
+	background-color: #1b435e;
+}
+
+.highlight {
+	background: yellow;
+}
+.my-icon{
+    background-repeat:space;
+}
+.my-ui-icon-run-01{
+	background-image: url(../svg/run.svg);
+}
+.my-ui-icon-hint-01{
+	background-image: url(../svg/info.svg);
+}
+
+.my-ui-icon-word-01{
+	background-image: url(../svg/word.svg);
+}
+
+.my-ui-icon-refresh-01{
+	background-image: url(../svg/refresh.svg);
+}
+.my-ui-icon-lock-01{
+	background-image:url(../svg/lock.svg);
+}
+.my-ui-icon-unlock-01{
+	background-image:url(../svg/unlock.svg);
+}
+
+.hidden{
+    display:none;
+}
+
+
+/*icon end */

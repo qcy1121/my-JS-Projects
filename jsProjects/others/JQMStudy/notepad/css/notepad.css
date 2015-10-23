@@ -1,0 +1,75 @@
+#notenav_wrap {
+	position: relative;
+	width: 100%;
+	height: auto;
+	min-height: 358px;
+	overflow: hidden;
+}
+
+#notenav_wrap ul {
+	position: absolute;
+	list-style-type: none;
+	z-index: 2;
+	margin: 0;
+	bottom: 0px;
+	padding: 0;
+	left: 45%;
+}
+
+#notenav_wrap ul li {
+	background: url(images/icons_off.png) center no-repeat;
+	width: 12px;
+	height: 12px;
+	float: left;
+	margin-right: 8px;
+}
+
+#notenav_wrap ul li.on {
+	background: url(images/icons_on.png) center no-repeat;
+	width: 12px;
+	height: 12px;
+	line-height: 12px;
+	float: left;
+	margin-right: 8px;
+	font-size: 10px;
+	text-align: center;
+	color: #666;
+	font-family: Arial
+}
+
+#notenav_list a {
+	position: absolute;
+	margin-left: 15px;
+}
+
+#notenav_list a img {
+	border: 0px;
+}
+
+#title {
+	margin: 0px;
+	text-align: center
+}
+
+.notep {
+	border-bottom: solid 1px #ccc
+}
+
+.ui-btn-corner-all {
+	border-radius: .2em;
+}
+
+.ui-header .ui-btn-inner {
+	font-size: 12.5px;
+	padding: .35em 6px .3em;
+}
+
+.ui-btn-inner {
+	padding: .3em 20px;
+	display: block;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	position: relative;
+	zoom: 1;
+}

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>three.js canvas - 3D chart</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            font-family: Monospace;
+            background-color: #f0f0f0;
+            margin: 0px;
+            overflow: auto;
+        }
+
+        table.th {
+            width: 70px;
+        }
+		/*canvas{background-color:black;}*/
+        
+    </style>
+    <script type="text/javascript">
+
+        var oldHex, oldSelected = null;
+        function $(ID) { return document.getElementById(ID); }
+        function reDraw() {
+            $("container").innerHTML = "";
+            oldHex = null, oldSelected = null;
+
+            set3DCanvasValue(getParamters());
+            setCubeValues();
+            init();
+            // animate();
+            drawShowTables();
+        }
+        function doSelected(object) {
+            if (object == null || !object instanceof THREE.CubeGeometry) return;
+            if (oldSelected != null) oldSelected.material.color.setHex(oldHex);
+            if (oldSelected === object) { oldHex = null; oldSelected = null; return; }
+            oldHex = object.material.color.getHex();
+            oldSelected = object;
+            object.material.color.setHex(0xffffff);
+            var pos = object.position;
+            var xVal = pos.x - zeroPoint.x;
+            var yVal = (pos.y - zeroPoint.y) * 2;
+            var zVal = -(pos.z - zeroPoint.z);
+            $("showValue").innerHTML = "X : " + xVal + ", height : " + yVal + ", Y : " + zVal;
+        }
+
+        function getParamters() {
+            var paramters = {};
+            // var form = $("drawForm");
+            var Xnumber = $("Xnumber").value;
+            var Ynumber = $("Ynumber").value;
+            var colorHigh = $("colorHigh").value;
+            var colorLow = $("colorLow").value;
+            paramters.cubeNumX = Xnumber;
+            paramters.cubeNumY = Ynumber;
+            paramters.highColor = colorHigh / 255;
+            paramters.lowColor = colorLow / 255;
+            return paramters;
+        }
+
+        function drawShowTables() {
+            var showTable = $("showTable");
+            showTable.innerHTML = '';
+            var shown = [];
+            shown.push("<table border=1 cellpadding=0 cellspacing=0>");
+            shown.push("<tr><th>Height</th>");
+            for (j = 0; j < cubeNumX; j++) { shown.push("<th>X" + j + "</th>") };
+            shown.push("<th>X Scale</th></tr>");
+            for (i = 0; i < cubeNumZ; i++) {
+
+                shown.push("<tr><th>Y" + (cubeNumZ-i-1) + "</th>");
+
+                for (j = 0; j < cubeNumX; j++) {
+                    var cube = cubeValues[j][i];
+                    shown.push("<td bgcolor=\"" + cube.color.getHex().toString(16) + "\"> " + Math.round(cube.height) + "</td>");
+                }
+                shown.push("<td>" + cubeValues[0][i].z + "</td>");
+            }
+            shown.push("</tr>");
+            shown.push("<tr><td>Y Scale</td>");
+            for (j = 0; j < cubeNumX; j++) {
+                shown.push("<td>" + cubeValues[j][0].x + "</td>");
+            }
+            shown.push("<td>&nbsp;</td></tr>");
+            shown.push("</table>");
+            showTable.innerHTML = shown.join(" ");
+
+        }
+
+    </script>
+</head>
+<body>
+
+    <div id="log"></div>
+    <div id="container" style="border: 1px solid red; width: 800px; height: 600px;"></div>
+    <div id="showValue" style="height: 20px;"></div>
+   
+    <form id="drawForm" name="drawForm">
+	    Render:
+		<select id='render'>
+			<option value='0'>Canvas</option>
+			<option value='1'>webGL</option>
+			<option value='2'>SVG</option>
+		<!--<option value='3'>DivCss3</option> -->
+		</select>
+        X :
+        <input type="text" name="Xnumber" id="Xnumber" value="10" />
+        Y :
+        <input type="text" name="Ynumber" id="Ynumber" value="10" />
+        <div style="display: none">
+            colorHigh :
+            <input type="range" name="colorHigh" id="colorHigh" min="0" max="255" step="1" value="255" />
+            colorLow :
+            <input type="range" name="colorLow" id="colorLow" min="0" max="255" step="1" value="0" />
+        </div>
+        <input type="button" value="Re-draw" onclick="reDraw()" />
+    </form>
+    </div>
+   
+    <div id="showTable"></div>
+    <script src="three.js"></script>
+    <script src="TrackballControls.js"></script>
+<script src="SVGRenderer.js"></script>
+<!--
+<script src="CSS3DRenderer.js"></script>
+<script src="CSS3DHelper.js"></script>
+-->
+    <!--<script src="helvetiker_regular.typeface.js"></script>-->
+
+    <script>
+      
+        var container, controls;
+        var camera, scene,textScene, renderer,textRenderer,createCubeFn;
+        var startX, startY, startZ;
+        var originalPoint = new THREE.Vector3(0, 0, 0);
+        var meshs, cubeValues, objects;
+        var projector;
+        var cubeNumX, cubeNumZ, cubeWidth, cubeDepth;
+        var stepX, stepZ, stepY, segmentStep, segment;
+        var zeroPoint;
+        var scaleX, scaleY, scaleZ;
+
+        //var cubeNumX = 10;
+        //var cubeNumZ = 5;
+
+        //var cubeWidth = 30;
+        //var cubeDepth = 20;
+        //var stepX = 10;
+        //var stepZ = 10;
+        //var stepY = 20;
+        var axisX, axisY, axisZ;
+
+		var nowRender=render;
+        var highColor, lowColor; // HSV color ,H value ,range 0 to 1. 
+
+        set3DCanvasValue({});
+        setCubeValues();
+        init();
+        animate();
+        drawShowTables();
+        function cubeValue(x, height, z) {
+            this.x = x;
+
+            this.z = z;
+            this.width = null;
+            this.height = height;
+            this.depth = null;
+
+            this.color = null;
+            this.cubeObj = null;
+            return this;
+        }
+
+
+        //temporary method. set cubeHeight; 
+        function setCubeValues() {
+            for (var i = 0; i < cubeNumX; i++) {
+                cubeValues[i] = [];
+                for (var j = 0; j < cubeNumZ; j++) {
+                    var cubeVal = new cubeValue();
+                    cubeVal.width = cubeWidth;
+                    cubeVal.height = Math.random() * axisY;
+                    cubeVal.depth = cubeDepth;
+
+                    cubeVal.x = (i + 0.5) * (stepX + cubeWidth);
+                    
+                    cubeVal.y = cubeVal.height / 2;
+                    cubeVal.z = (j + 0.5) * (stepZ + cubeDepth);
+                    cubeVal.color = createColor(cubeVal.height, axisY, highColor, lowColor);
+                    cubeValues[i][j] = cubeVal;
+                }
+            }
+        }
+
+        function set3DCanvasValue(paramters) {
+            camera = null, scene = null,textScene=null, renderer = null,textRenderer = null;
+            startX = null, startY = null, startZ = null;
+            originalPoint = new THREE.Vector3(0, 0, 0);
+            meshs = [], objects = [], cubeValues = [];
+            projector = null;
+
+            cubeNumX = paramters.cubeNumX === undefined ? 10 : paramters.cubeNumX;
+            cubeNumZ = paramters.cubeNumY === undefined ? 10 : paramters.cubeNumY;
+
+            cubeWidth = paramters.cubeWidth === undefined ? 30 : paramters.cubeWidth;
+            cubeDepth = paramters.cubeDepth === undefined ? 20 : paramters.cubeDepth;
+            stepX = paramters.stepX === undefined ? 35 : paramters.stepX;
+            stepY = paramters.stepY === undefined ? 20 : paramters.stepY;
+            stepZ = paramters.stepZ === undefined ? 20 : paramters.stepZ;
+            axisX = null, axisY = null, axisZ = null;
+            highColor = paramters.highColor === undefined ? 1 : paramters.highColor;
+            lowColor = paramters.lowColor === undefined ? 0 : paramters.lowColor;
+            zeroPoint = null;
+            scaleX = paramters.scaleX === undefined ? 1 : paramters.scaleX;
+            scaleY = paramters.scaleY === undefined ? 1 : paramters.scaleY;
+            scaleZ = paramters.scaleZ === undefined ? 1 : paramters.scaleZ;
+
+            projector = new THREE.Projector();
+            axisX = cubeNumX * (cubeWidth + stepX);
+            axisY = stepY * 10;
+            axisZ = cubeNumZ * (cubeDepth + stepZ);
+            startX = -axisX / 2, startY = -80, startZ = axisZ / 2;
+
+            originalPoint = new THREE.Vector3(startX, startY, startZ);
+            zeroPoint = new THREE.Vector3(0, 0, axisZ).add(originalPoint);
+            segment = 5;
+            segmentStep = axisY / segment;
+        }
+
+        function init() {
+		
+            var log = document.getElementById("log");
+            //container = document.createElement('div');
+            //document.body.appendChild(container);
+            container = document.getElementById("container");
+            canvas = document.createElement("canvas");
+
+
+            //camera = new THREE.OrthographicCamera(window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 2000, 1000);
+            camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 1, axisX * axisZ / 2);
+            camera.position.x = axisX;
+            camera.position.y = axisY;
+            camera.position.z = axisZ;
+            
+            controls = new THREE.TrackballControls(camera, container);
+            //controls.rotateSpeed = 0.8;
+            //controls.zoomSpeed = 0.8;
+            //controls.panSpeed = 0.8;
+            //controls.noZoom = false;
+            //controls.noPan = false;
+            //controls.staticMoving = true;
+            //controls.dynamicDampingFactor = 1;
+            //controls.keys = [65, 83, 68];
+
+
+            scene = new THREE.Scene();
+            //Lights
+
+            renderer = getRenderer();
+			
+            var ambientLight = new THREE.AmbientLight(0xaaaaaa);
+            scene.add(ambientLight);
+
+            var directionalLight = new THREE.DirectionalLight(0xaaaaaa);
+            directionalLight.position = camera.position;
+            scene.add(directionalLight);
+
+            //var material = new THREE.MeshPhongMaterial({ shading: THREE.FlatShading, overdraw: true});// 
+            var geometrys = [];
+            for (var i = 0; i < segment; i++) {
+                var geometry = new THREE.CubeGeometry(1, 1, 1, 1, i + 1, 1);
+               // var geometry = new THREE.CylinderGeometry(10, 20, 10, 1, i + 1, true);
+                geometrys[i]=geometry;
+            }
+            //Create cubes
+            for (var i = 0; i < cubeNumX; i++) {
+                for (var j = 0; j < cubeNumZ; j++) {
+                    var cubeVal = cubeValues[i][j];
+                    var x = cubeVal.x;
+                    var y = cubeVal.y;
+                    var z = -cubeVal.z;
+
+                    var position = (new THREE.Vector3(x, y, z)).add(originalPoint);
+                    var cube = createCubeFn(cubeVal.width, cubeVal.height, cubeVal.depth, cubeVal.color, position, geometrys);
+                    //cubeVal.cubeObj = cube;
+                    objects.push(cube);
+                    scene.add(cube);
+                }
+            }
+
+
+            drawAxis(axisX, axisY, axisZ);
+            drawGrid(axisX, axisY, axisZ, (cubeWidth + stepX), stepY, (cubeDepth + stepZ));
+            drawScale(axisX, axisY, axisZ, cubeWidth + stepX, stepY, cubeDepth + stepZ);
+
+            //renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.autoClear = false;
+            container.appendChild(renderer.domElement);
+
+            container.addEventListener('click', onDocumentMouseDown, false);
+            window.addEventListener('resize', onWindowResize, false);
+
+        }
+		function getRenderer(){
+		var selector =$('render'),value = selector.value,chartRender;
+		nowRender = render;
+			textScene = scene;
+		value = Number(value);
+		createCubeFn = createCube;
+		switch (value){
+		  case 1: chartRender = new THREE.WebGLRenderer({ antialias: true });break;
+		  case 2: chartRender = new THREE.SVGRenderer({ antialias: false });textScene = new THREE.Scene();break;
+		  case 3: chartRender = new THREE.CSS3DRenderer({ antialias: false });nowRender = CSSRender;textScene = new THREE.Scene();createCubeFn = createCubeCss;break;
+		  case 0:
+		  default:
+				chartRender = new THREE.CanvasRenderer({ antialias: false });break;
+		}
+		if(textScene!=scene){
+		textRenderer = new THREE.CanvasRenderer();
+		}else{
+		textRenderer = chartRender;
+		}
+		return chartRender;
+		}
+
+
+        function onWindowResize() {
+
+            camera.left = window.innerWidth / -2;
+            camera.right = window.innerWidth / 2;
+            camera.top = window.innerHeight / 2;
+            camera.bottom = window.innerHeight / -2;
+
+            camera.updateProjectionMatrix();
+
+            //renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(container.clientWidth, container.clientHeight);
+
+        }
+
+        function onDocumentMouseDown(event) {
+            event.preventDefault();
+            var left = container.getBoundingClientRect().left,
+                top = container.getBoundingClientRect().top;
+            var vector = new THREE.Vector3(((event.clientX - left) / (container.clientWidth)) * 2 - 1, -((event.clientY - top) / (container.clientHeight)) * 2 + 1, 0.5);
+            projector.unprojectVector(vector, camera);
+            var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+            var intersects = ray.intersectObjects(objects);
+            if (intersects.length > 0) {
+                //change the selected cube color
+                //intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
+                doSelected(intersects[0].object);
+            }
+        }
+        var mark = 0;
+        function animate() {
+            log.innerHTML = mark;
+            requestAnimationFrame(animate);
+            mark++;
+            if (mark < 3) return;
+            mark = 0;
+            
+
+            nowRender();
+            //	stats.update();
+           
+        }
+        function render() {
+            controls.update();
+            var position = camera.position;
+            for (var i = 0; i < meshs.length; i++) {
+
+                meshs[i].lookAt(position);
+            }
+			renderer.clear();textRenderer.clear();
+            renderer.render(scene, camera);
+			textRenderer.render(textScene,camera);
+        }
+		function CSSRender(){
+            controls.update();textRenderer.clear();
+			renderer.render(scene, camera);
+			textRenderer.render(textScene,camera);
+		}
+
+
+        function createColor(height, maxValue, maxColor, minColor, s, v) {
+            if (maxColor === undefined) maxColor = 1;
+            if (minColor === undefined) minColor = 0;
+            if (s === undefined) s = 0.8;
+            if (v === undefined) v = 0.8;
+            var h, color = new THREE.Color();
+            if (minColor > maxColor) h = maxColor + (1 - height / maxValue) * (minColor - maxColor);
+            else h = minColor + (height / maxValue) * (maxColor - minColor);
+            return color.setHSV(h, s, v);
+
+        }
+
+        function createLine(originalPoint, endPoint, hex) {
+            if (hex === undefined) hex = 0x000000;
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(originalPoint);
+            geometry.vertices.push(endPoint);
+            var material = new THREE.LineBasicMaterial({ color: hex, opacity: 1, linewidth: 1 });
+            var line = new THREE.Line(geometry, material);
+            
+
+            return line;
+        }
+
+        function createCube(width, height, depth, color, position, geometrys) {
+           
+            //var material = new THREE.MeshNormalMaterial({ color: color.getHex(), shading: THREE.FlatShading, overdraw: true });// 
+            var material = new THREE.MeshLambertMaterial({ color: color.getHex(), shading: THREE.FlatShading, overdraw: true });// 
+            //var material = new THREE.MeshPhongMaterial({ color: color.getHex(), shading: THREE.FlatShading, overdraw: true });// 
+            //var geometry = new THREE.CubeGeometry(width, height, depth, 1, Math.ceil(height / segmentStep), 1);
+            
+            var geometry = geometrys[Math.ceil(height / segmentStep)-1];
+            var cube = new THREE.Mesh(geometry, material);
+            //cube.material.color = color;//.getHex();
+            //THREE.GeometryUtils.merge();
+            //cube.geometry.heightSegments = Math.ceil(height / segmentStep);
+            cube.scale.x = width;
+            cube.scale.y = height;
+            cube.scale.z = depth;
+
+            cube.position = position;
+            //cube.matrixAutoUpdate = false;
+            //cube.updateMatrix();
+            return cube;
+        }
+		function getCss3Cube(){
+			var css3Cube = new CSS3DCube(scene),
+			fun = function(){
+				return css3Cube;
+			}
+			getCss3Cube = fun;
+			return fun();
+		}
+		function createCubeCss(width, height, depth, color, position, geometrys) {
+		//var css3Cube = getCss3Cube();
+		//var xs = position.x,ys = position.y,zs = position.z;
+		//return css3Cube.createCube(xs, ys, zs,width,height,color);
+		
+		//    for ( var i = 0; i < 10; i ++ ) {
+		//
+		//		var element = document.createElement( 'div' );
+		//		element.style.width = '100px';
+		//		element.style.height = '100px';
+		//		element.style.background = new THREE.Color( Math.random() * 0xffffff ).getContextStyle();
+		//
+		//		var object = new THREE.CSS3DObject( element );
+		//		object.position.x = Math.random() * 200 - 100;
+		//		object.position.y = Math.random() * 200 - 100;
+		//		object.position.z = Math.random() * 200 - 100;
+		//		object.scale.x = Math.random() + 0.5;
+		//		object.scale.y = Math.random() + 0.5;
+		//		scene2.add( object );
+		//
+		//	}
+        // var xLength = 400, yLength = 200, zLength = 300;
+			//
+			// css3Cube.createPlane(-0.5,-0.5, -0.5, xLength, yLength, css3Cube.PLANE.XOY, new THREE.Color(0xff0000).getContextStyle());//0
+			// css3Cube.createPlane(-0.5,-0.5, -0.5, zLength, yLength, css3Cube.PLANE.YOZ, new THREE.Color(0x00ff00).getContextStyle());
+			// css3Cube.createPlane(-0.5,-0.5, -0.5, xLength, zLength, css3Cube.PLANE.XOZ, new THREE.Color(0x0000ff).getContextStyle());
+	
+	
+			//var xs,ys = 0,zs,val;
+			//var colors = new Array(6);
+			//var m=10,n=10;
+	        //
+			//for (var i = 0; i < m; i++) {
+			//	xs = i * (xLength/m);
+			//	for (var j = 0; j < n; j++) {
+			//		zs = j * (zLength/n);
+			//		val = Math.random();
+			//		colors[0] = colors[1] = new THREE.Color(((i+1)/m+1)/3 * 0xff0000).getContextStyle();
+			//		colors[2] = colors[3] = new THREE.Color(((j+1)/n+1)/3 * 0x00ff00).getContextStyle();
+			//		colors[4] = colors[5] = new THREE.Color(val * 0xffffff).getContextStyle();
+			//		css3Cube.createCube(xs, ys, zs, xLength/m-2, val * yLength, zLength/n-2, colors);
+			//	}
+			//}
+		}
+
+        function drawAxis(axisX, axisY, axisZ) {
+            //Create axis
+            var outLenth = 30;
+            var colorHex = 0x000000;
+            //draw x axis
+            var startPoint = new THREE.Vector3(0, 0, 0).add(originalPoint);
+
+
+            var dir = new THREE.Vector3(1, 0, 0);
+            drawArrow(dir, startPoint, axisX + outLenth, colorHex);
+
+            dir = new THREE.Vector3(0, 1, 0);
+            drawArrow(dir, startPoint, axisY + outLenth, colorHex);
+
+            dir = new THREE.Vector3(0, 0, -1);
+            drawArrow(dir, startPoint, axisZ + outLenth, colorHex);
+
+            //draw the faced axisZ
+            startPoint = new THREE.Vector3(axisX, 0, 0).add(originalPoint);
+            endPoint = (new THREE.Vector3(axisX, 0, -axisZ)).add(originalPoint);
+            line = createLine(startPoint, endPoint);
+            scene.add(line);
+        }
+
+
+        function drawArrow(dir, origin, length, hex) {
+            if (hex === undefined) hex = 0x000000;
+            if (length === undefined) length = 20;
+            var radius = 50;
+
+
+
+            var endPoint = dir.clone().multiplyScalar(length).add(origin);
+            var line = createLine(origin, endPoint, hex);
+            //var line = new LineHelper(origin, endPoint, hex);
+            scene.add(line);
+
+
+            var arrow = new THREE.ArrowHelper(dir, endPoint, radius, hex);
+            arrow.position.add(dir.clone().multiplyScalar(-radius));
+            scene.add(arrow);
+
+
+
+            var text, pos;
+            var disHeight = 10, disWidth = 10;
+            if (dir.x == 1) {
+                text = "X axis";
+                pos = arrow.position.clone().add(new THREE.Vector3(radius, -disHeight, 0));
+            } else if (dir.y == 1) {
+                text = "height axis";
+                pos = arrow.position.clone().add(new THREE.Vector3(-disWidth, radius, 0));
+            } else {
+                text = "Y axis";
+                pos = arrow.position.clone().add(new THREE.Vector3(0, -disHeight, -radius));
+            }
+            drawText(text, pos);
+
+        }
+
+
+
+        function drawGrid(axisX, axisY, axisZ, stepX, stepY, stepZ) {
+            var color = new THREE.Color().setHSV(0, 0, 0);
+            var plane, pos, startPoint, endPoint;
+
+            startPoint = new THREE.Vector3(0, 0, -axisZ).add(originalPoint);//startPoint
+            endPoint = new THREE.Vector3(axisX, axisY, -axisZ).add(originalPoint);//endPoint
+            plane = drawPlane(startPoint, endPoint, axisX, axisY, axisX / stepX, axisY / stepY);
+
+            scene.add(plane);
+
+            startPoint = originalPoint.clone();//startPoint
+            endPoint = new THREE.Vector3(0, axisY, -axisZ).add(originalPoint);//endPoint
+            plane = drawPlane(startPoint, endPoint, axisZ, axisY, axisZ / stepZ, axisY / stepY);
+
+            //plane.eulerOrder = 'YZX';
+            plane.rotation.y = Math.PI / 2;
+            scene.add(plane);
+
+
+            startPoint = originalPoint.clone();//startPoint
+            endPoint = new THREE.Vector3(axisX, 0, -axisZ).add(originalPoint);//endPoint
+            plane = drawPlane(startPoint, endPoint, axisX, axisZ, axisX / stepX, axisZ / stepZ);
+            // plane.eulerOrder = 'ZXY';
+            plane.rotation.x = Math.PI / 2;
+            scene.add(plane);
+
+
+
+        }
+
+        function drawPlane(startPoint, endPoint, width, height, widthSegments, heightSegments) {
+            var color = new THREE.Color().setHSV(0, 0, 0.5);
+            var pos = startPoint.add(endPoint).multiplyScalar(1 / 2);
+
+            // wireframe for plane
+            var wireframeMaterial = new THREE.MeshBasicMaterial({ color: color.getHex(), wireframe: true, side: THREE.DoubleSide });
+            var planeGeometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
+            var plane = new THREE.Mesh(planeGeometry, wireframeMaterial);
+            plane.position = pos;
+
+            return plane;
+
+        }
+
+        function drawScale(axisX, axisY, axisZ, stepX, stepY, stepZ, lineLen) {
+            if (!lineLen) lineLen = 10;
+            var disHeight = 10, disWidth = 10, startPosition, endPosition, textPos;
+            //draw 0,0,0 point text
+            textPos = new THREE.Vector3(0, -disHeight, 0).add(originalPoint);
+            drawText("0", textPos);
+            for (var i = 1; i <= axisX / stepX; i++) {
+                startPosition = new THREE.Vector3(i * stepX, -lineLen, 0).add(originalPoint);
+                endPosition = new THREE.Vector3(i * stepX, 0, 0).add(originalPoint);
+
+
+                if (i % 2 == 0) {
+                    startPosition.add(new THREE.Vector3(0, -lineLen, 0));
+                    endPosition.add(new THREE.Vector3(0, 0, 0));
+                    textPos = (new THREE.Vector3(0, -disHeight, 0)).add(startPosition);
+                    drawText("" + i * scaleX * stepX, textPos);
+                }
+                scene.add(createLine(startPosition, endPosition));
+            }
+            for (var i = 1; i <= axisY / stepY; i++) {
+
+                startPosition = new THREE.Vector3(-lineLen, i * stepY, 0).add(originalPoint);
+                endPosition = new THREE.Vector3(0, i * stepY, 0).add(originalPoint);
+
+
+                if (i % 2 == 0) {
+                    startPosition.add(new THREE.Vector3(-lineLen, 0, 0));
+                    endPosition.add(new THREE.Vector3(0, 0, 0));
+                    textPos = (new THREE.Vector3(0, -disHeight, 0)).add(startPosition);
+                    drawText("" + i * scaleY * stepY, textPos);
+                }
+                scene.add(createLine(startPosition, endPosition));
+            }
+            for (var i = 1; i <= axisZ / stepZ; i++) {
+                startPosition = new THREE.Vector3(0, -lineLen, -i * stepZ).add(originalPoint);
+                endPosition = new THREE.Vector3(0, 0, -i * stepZ).add(originalPoint);
+
+
+                if (i % 2 == 0) {
+                    startPosition.add(new THREE.Vector3(0, -lineLen, 0));
+                    endPosition.add(new THREE.Vector3(0, 0, 0));
+                    textPos = (new THREE.Vector3(disWidth, -disHeight, 0)).add(startPosition);
+                    drawText(" " + i * scaleZ * stepZ + "", textPos);
+                }
+                scene.add(createLine(startPosition, endPosition));
+
+                startPosition = new THREE.Vector3(axisX, -lineLen, -i * stepZ).add(originalPoint);
+                endPosition = new THREE.Vector3(axisX, 0, -i * stepZ).add(originalPoint);
+                if (i % 2 == 0) {
+                    startPosition.add(new THREE.Vector3(0, -lineLen, 0));
+                    endPosition.add(new THREE.Vector3(0, 0, 0));
+                    textPos = (new THREE.Vector3(disWidth, -disHeight, 0)).add(startPosition);
+                    drawText(" " + i * scaleZ * stepZ + "", textPos);
+                }
+                scene.add(createLine(startPosition, endPosition));
+            }
+        }
+        function drawText(text, position) {
+
+
+            var canvas = document.createElement('canvas');
+            canvas.width = text.length * 16;
+            canvas.height = 48;
+            var context = canvas.getContext('2d');
+            //context.textBaseline = 'top';
+            context.font = "32pt sans-serif";
+            context.fillText(text, 0, canvas.height, canvas.width);
+            var texture = new THREE.Texture(canvas);
+            texture.needsUpdate = true;
+            var cover = new THREE.MeshBasicMaterial({ map: texture, overdraw: false, transparent: true });
+            var shape = new THREE.PlaneGeometry(canvas.width, canvas.height);
+            banner = new THREE.Mesh(shape, cover);
+            banner.position = position;
+            banner.scale = new THREE.Vector3(0.2, 0.2, 0.2);
+
+            meshs.push(banner);
+
+            textScene.add(banner);
+
+        }
+
+
+</script>
+
+</body>
+</html>

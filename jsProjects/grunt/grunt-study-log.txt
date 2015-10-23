@@ -1,0 +1,316 @@
+﻿run "npm install -g grunt"  --安装 grunt
+run "npm install -g grunt-cli"  --这条命令将会把grunt命令植入到你的系统路径中，这样就允许你从任意目录来运行它(定位到任意目录运行grunt命令)
+
+--准备一个新的Grunt项目
+	--package.json：这个文件被用来存储已经作为npm模块发布的项目元数据(也就是依赖模块)。你将在这个文件中列出你的项目所依赖的Grunt(通常我们在这里配置Grunt版本)和Grunt插件(相应版本的插件)。
+		--`grunt-init模板都会自动创建一个项目特定的package.json文件。
+		--npm init命令会自动创建一个基本的package.json文件。
+	--Gruntfile：通常这个文件被命名为Gruntfile.js或者Gruntfile.coffee，它用于配置或者定义Grunt任务和加载Grunt插件。
+-------------
+--安装Grunt和grunt插件
+	--添加Grunt和Grunt插件到一个现有的package.json中最简单的方式就是使用"npm install <module> --save-dev"命令。这不仅会在本地安装<module>，
+	它还会使用一个波浪形字符(~)的版本范围自动将所安装的<module>添加到项目依赖中。	
+		--例如使用下面的命令将会安装最新版的Grunt到你的项目中，并自动将它添加到你的项目依赖中：npm install grunt --save-dev
+		--上述命令也可以用于Grunt插件和其他的node模块的安装。当完成操作后请确保更新后的package.json文件也要与你的项目一起提交。
+	--Gruntfile
+		--Gruntfile.js或者Gruntfile.coffee文件都是归属于你项目根目录中的一个有效的JavaScript或者CoffeeScript文件(和package.json文件一样都在根目录中)，并且它(Gruntfile)也应该与你的项目源文件一起提交。
+			--一个Gruntfile由下面几部分组成：
+			--"wrapper"函数(包装函数)
+			--项目和任务配置
+			--加载的Grunt插件和任务
+			--自定义任务
+------------------------------
+---用一个现有的Grunt项目进行工作
+	--假设已经安装好Grunt CLI并且项目也已经使用一个package.json和一个Gruntfile文件配置好了，那么接下来用Grunt进行工作就非常容易了：	
+		--进入到项目的根目录(在命令行面板定位到项目根目录。在windows系统下，也可以进入项目根目录的文件夹后，按Shift+鼠标右键，打开右键菜单，选择“在此处打开命令窗口(W)”)。
+		--运行npm install安装项目相关依赖(插件，Grunt内置任务等依赖)。
+		--使用grunt(命令)运行Grunt。
+		--就是这么简单。已经安装的Grunt任务可以通过运行grunt --help列出来，但是通常最好还是先查看一下项目的文档。
+------------------------------------
+--package.json 示例
+	{
+		"name": "my-project-name", // 项目名称
+		"version": "0.1.0", // 项目版本
+		"devDependencies": { // 项目依赖
+		    "grunt": "~0.4.1", // Grunt库
+		    "grunt-contrib-jshint": "~0.6.0", //以下三个是Grunt内置任务
+		    "grunt-contrib-nodeunit": "~0.2.0",
+		    "grunt-contrib-uglify": "~0.2.2"
+		}
+	}
+---------------------
+--一个Gruntfile示例
+	--在下面的Gruntfile中，项目的元数据会从项目的package.json文件中导入到grunt配置中，同时grunt-contrib-uglify插件的uglify任务被配置用于压缩一个源文件，
+	同时使用该元数据(导入的元数据)动态的生成一个标语(banner)注释。在命令行运行grunt时默认会运行uglify任务。
+		
+		module.exports = function(grunt){
+		    // 项目配置
+		    grunt.initConfig({
+		        pkg: grunt.file.readJSON('package.json'),
+		        uglify: {
+		            options: {
+		                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+		            },
+		            build: {
+		                src: 'src/<%=pkg.name %>.js',
+		                dest: 'build/<%= pkg.name %>.min.js'
+		            }               
+		        }
+		    });
+		    // 加载提供"uglify"任务的插件
+		    grunt.loadNpmTasks('grunt-contrib-uglify');
+		    // 默认任务
+		    grunt.registerTask('default', ['uglify']);
+		}
+	---各组件
+		--"wrapper"函数：每个Gruntfile(和Grunt插件)都使用这个基本格式，并且所有你的Grunt代码都必须指定在这个函数里面：		
+			module.exports = function(grunt) {
+			    // 在这里处理Grunt相关的事情
+			}
+		--项目和任务配置		
+			大多数Grunt任务所依赖的配置数据都被定义在传递给grunt.initConfig方法的一个对象中。		
+			在这个例子中，grunt.file.readJSON('package.json')会把存储在package.json中的JSON元数据导入到Grunt配置中。<% %>模板字符串可以引用任意的配置属性。			
+			你可以在这个配置对象中(传递给initConfig()方法的对象)存储任意的数据，只要它不与你任务配置所需的属性冲突，否则会被忽略。此外，由于这本身就是JavaScript，
+			你不仅限于使用JSON；你可以在这里使用任意的有效的JS代码，你甚至可以以编程的方式生成配置。
+			
+			与大多数任务一样，grunt-contrib-uglify插件的uglify任务要求它的配置被指定在一个同名属性中。
+			在这里有一个例子, 我们指定了一个banner选项(用于在文件顶部生成一个注释)，紧接着是一个单一的名为build的uglify目标，
+			用于将一个js文件压缩为一个目标文件(比如将src目录jquery-1.9.0.js压缩为jquery-1.9.0.min.js然后存储到dest目录)。
+
+		--加载grunt插件和任务
+			许多常用的任务像concatenation，minification和linting都被作为grunt插件来使用。只要一个插件被作为一个依赖指定在项目的package.json文件中，
+			并且已经通过npm install安装好，都可以在你的Gruntfile文件中使用下面这个简单的命令启用它(所依赖的任务)。
+				// 加载提供"uglify"任务的插件
+				grunt.loadNpmTasks('grunt-contrib-uglify');
+				注意: grunt --help命令可以列出所有可用的任务。
+-----------------------------
+    --任务
+            grunt.registerTask(taskName, [description, ] taskList) //taskList为数组
+    		grunt.registerTask(taskName, [description, ] taskFunction)
+    		grunt.registerMultiTask(taskName, [description, ] taskFunction) //多任务
+                你可以通过定义一个default任务来配置Grunt，让它默认运行一个或者多个任务。在下面的例子中，在命令行中运行grunt而不指定特定的任务将自动运行uglify任务。
+    			这个功能与显示的运行grunt uglify或者等价的grunt default一样。你可以在任务参数数组中指定任意数量的任务(这些任务可以带参数，也可以不带参数)。
+    				// 默认任务
+    				grunt.registerTask('default', ['uglify']);
+    			如果你的项目所需的任务没有对应的Grunt插件提供相应的功能，你可以在Gruntfile内定义自定义的任务。
+        -- "基本" 任务
+             当一个基本任务执行时，Grunt并不会检查配置和环境 -- 它仅仅执行指定的任务函数，并传递任何使用冒号分割的参数作为函数的参数。
+
+
+		--自定义任务
+            在一个任务内部，你可以执行其他的任务。任务也可以是异步的。任务也可以访问它们自身名称和参数。
+            当任务失败时，所有后续任务都将终止，除非指定 --force 。
+            任务还可以依赖于其他任务的成功执行。注意 grunt.task.requires 并不会真正的运行其他任务，它仅仅检查其它任务是否已经执行，并且没有失败。
+            如果任务需要的配置属性不存在，其也可能失败。
+            任务还可以访问配置属性。
+			例如，下面的Gruntfile就定义了一个完整的自定义的default任务，它甚至没有利用任务配置(没有使用grunt.initConfig()方法)：
+				module.exports = function(grunt) {
+				    // 一个非常基础的default任务
+				    grunt.registerTask('default', 'Log some stuff.', function() {
+				        grunt.log.write('Logging some stuff...').ok();
+				          grunt.task.run('bar', 'baz');//执行其他任务
+				          setTimeout(function(){console.log();},320);//执行异步
+				          console.log(this.name);//返回自身名称和参数。
+
+				          // 如果"foo"任务运行失败或者没有运行则任务失败。
+                            grunt.task.requires('foo');
+                            // 如果"foo"任务运行成功则执行这里的代码。引用下面定义的Task
+                            grunt.log.writeln('Hello, world.');
+
+                          // 记录属性值，如果属性未定义（undefined）则返回null。
+                           grunt.log.writeln('The meta.name property is: ' + grunt.config('meta.name'));
+                           // 同样的记录属性值，如果属性未定义（undefined）则返回null。
+                           grunt.log.writeln('The meta.name property is: ' + grunt.config(['meta', 'name']));
+				    });
+				    grunt.registerTask('foo', 'My "foo" task.', function() {
+                      return false;
+                    });
+				};
+                    // 用法：
+                    // grunt foo bar
+                    //   没有输出，因为"foo"失败。
+                    // grunt bar
+                    //   没有输出，因为"foo"从未运行。
+
+
+自定义的项目特定的任务可以不定义在Gruntfile中；它们可以定义在一个外部.js文件中，然后通过grunt.loadTasks方法来加载。
+-----------------------------------------
+--文件
+	--由于大多数的任务执行文件操作，Grunt有一个强大的抽象声明说明任务应该操作哪些文件。这里有好几种定义src-dest(源文件-目标文件)文件映射的方式，
+	都提供了不同程度的描述和控制操作方式。任何一种多任务(包含多个任务目标的任务)都能理解下面的格式，所以你只需要选择满足你需求的格式就行。
+	所有的文件格式都支持src和dest属性，此外"Compact"[简洁]和"Files Array"[文件数组]格式还支持以下一些附加的属性：
+	
+		--filter 它通过接受任意一个有效的fs.Stats方法名或者一个函数来匹配src文件路径并根据匹配结果返回true或者false。		
+		--nonull 当一个匹配没有被检测到时，它返回一个包含模式自身的列表。否则，如果没有任何匹配项时它返回一个空列表。
+				结合Grunt的--verbore标志, 这个选项可以帮助用来调试文件路径的问题。		
+		--dot 它允许模式模式匹配句点开头的文件名，即使模式并不明确文件名开头部分是否有句点。		
+		--matchBase 如果设置这个属性，缺少斜线的模式(意味着模式中不能使用斜线进行文件路径的匹配)将不会匹配包含在斜线中的文件名。
+			例如，a?b将匹配/xyz/123/acb但不匹配/xyz/acb/123。		
+		--expand 处理动态的src-dest文件映射，更多的信息请查看"动态构建文件对象"。	
+		--其他的属性将作为匹配项传递给底层的库。在node-glob和minimatch文档中可以查看更多选项。
+--通配符模式Globbing patterns，大意是指使用一些通配符形式的匹配模式快速的匹配文件。
+	--通常分别指定所有源文件路径的是不切实际的(也就是将源文件-目标文件一一对应的关系列出来)，因此Grunt支持通过内置的node-glob和minimatch库来匹配文件名(又叫作globbing)。
+	  当然这并不是一个综合的匹配模式方面的教程，你只需要知道如何在文件路径匹配过程中使用它们即可：
+
+			*匹配任意数量的字符，但不匹配/			
+			?匹配单个字符，但不匹配/			
+			**匹配任意数量的字符，包括/，只要它是路径中唯一的一部分			
+			{}允许使用一个逗号分割的列表或者表达式			
+			!在模式的开头用于否定一个匹配模式(即排除与模式匹配的信息)			
+			大多数的人都知道foo/*.js将匹配位于foo/目录下的所有的.js结尾的文件, 而foo/**/*.js将匹配foo/目录以及其子目录中所有以.js结尾的文件。
+			
+			此外, 为了简化原本复杂的通配符模式，Grunt允许指定一个数组形式的文件路径或者一个通配符模式。模式处理的过程中，带有!前缀模式不包含结果集中与模式相配的文件。 而且其结果集也是唯一的。
+
+		示例：
+		
+			//可以指定单个文件
+			{src: 'foo/this.js', dest: …}
+			//或者指定一个文件数组
+			{src: ['foo/this.js', 'foo/that.js', 'foo/the-other.js'], dest: …}
+			//或者使用一个匹配模式
+			{src: 'foo/th*.js', dest: …}
+			
+			//一个独立的node-glob模式
+			{src: 'foo/{a,b}*.js', dest: …}
+			//也可以这样编写
+			{src: ['foo/a*.js', 'foo/b*.js'], dest: …}
+			
+			//foo目录中所有的.js文件，按字母排序
+			{src: ['foo/*js'], dest: …}
+			//这里首先是bar.js，接着是剩下的.js文件按字母排序
+			{src: ['foo/bar.js', 'foo/*.js'], dest: …}
+			
+			//除bar.js之外的所有的.js文件，按字母排序
+			{src: ['foo/*.js', '!foo/bar.js'], dest: …}
+			//所有.js文件按字母排序, 但是bar.js在最后.
+			{src: ['foo/*.js', '!foo/bar.js', 'foo/bar.js'], dest: …}
+			
+			//模板也可以用于文件路径或者匹配模式中
+			{src: ['src/<%= basename %>.js'], dest: 'build/<%= basename %>.min.js'}
+			//它们也可以引用在配置中定义的其他文件列表
+			{src: ['foo/*.js', '<%= jshint.all.src %>'], dest: …}
+			可以在node-glob和minimatch文档中查看更多的关于通配符模式的语法。
+
+--构建动态文件对象
+	--当你希望处理大量的单个文件时，这里有一些附加的属性可以用来动态的构建一个文件. 这些属性都可以指定在Compact和Files Array映射格式中(这两种格式都可以使用)。
+
+		expand 设置true用于启用下面的选项：		
+		cwd 相对于当前路径所匹配的所有src路径(但不包括当前路径。)		
+		src 相对于cwd路径的匹配模式。		
+		dest 目标文件路径前缀。		
+		ext 使用这个属性值替换生成的dest路径中所有实际存在文件的扩展名(比如我们通常将压缩后的文件命名为.min.js)。		
+		flatten 从生成的dest路径中移除所有的路径部分。		
+		rename 对每个匹配的src文件调用这个函数(在执行ext和flatten之后)。传递dest和匹配的src路径给它，这个函数应该返回一个新的dest值。
+			 如果相同的dest返回不止一次，每个使用它的src来源都将被添加到一个数组中。
+	示例，
+		minify任务将在static_mappings和dynamic_mappings两个目标中查看相同的src-dest文件映射列表, 
+			这是因为任务运行时Grunt会自动展开dynamic_mappings文件对象为4个单独的静态src-dest文件映射--假设这4个文件能够找到。		
+		可以指定任意结合的静态src-dest和动态的src-dest文件映射。
+		
+		grunt.initConfig({
+		    minify: {
+		        static_mappings: {
+		            //由于这里的src-dest文件映射时手动指定的, 每一次新的文件添加或者删除文件时，Gruntfile都需要更新
+		            files: [
+		                {src: 'lib/a.js', dest: 'build/a.min.js'},
+		                {src: 'lib/b.js', dest: 'build/b.min.js'},
+		                {src: 'lib/subdir/c.js', dest: 'build/subdir/c.min.js'},
+		                {src: 'lib/subdir/d.js', dest: 'build/subdir/d.min.js'}
+		            ]
+		        },
+		        dynamic_mappings: {
+		            //当'minify'任务运行时Grunt将自动在"lib/"下搜索"**/*.js", 然后构建适当的src-dest文件映射，因此你不需要在文件添加或者移除时更新Gruntfile
+		            files: [
+		                {
+		                    expand: true, //启用动态扩展
+		                    cwd: 'lib/', //批匹配相对lib目录的src来源
+		                    src: '**/*.js', //实际的匹配模式
+		                    dest: 'build/', //目标路径前缀
+		                    ext: '.min.js' //目标文件路径中文件的扩展名.
+		                }
+		            ]
+		        }
+		    }
+		});
+--模板
+
+	--使用<% %>分隔符指定的模板会在任务从配置中读取相应的数据时将自动填充。模板会以递归的方式填充，直到配置中不再存在遗留模板相关的信息(与模板匹配的)。	
+	  整个配置对象决定了属性上下文(模板中的属性)。此外，在模板中使用grunt以及它的方法都是有效的，例如： <%= grunt.template.today('yyyy-mm-dd') %>。
+	
+		<%= prop.subprop %> 将会自动展开配置信息中的prop.subprop的值，不管是什么类型。像这样的模板不仅可以用来引用字符串值，还可以引用数组或者其他对象类型的值。		
+		<% %>执行任意内联的JavaScript代码，对于控制流或者循环来说是非常有用的。
+	
+	下面提供了一个concat任务配置示例，运行grunt concat:sample时将通过banner中的/* abcde */连同foo/*.js+bar/*.js+bar/*.js匹配的所有文件来生成一个名为build/abcde.js的文件。
+	
+	grunt.initConfig({
+	    concat: {
+	        sample: {
+	            options: {
+	                banner: '/* <%= baz %> */\n' // '/* abcde */\n'
+	            },
+	            src: ['<%= qux %>', 'baz/*.js'], // [['foo/*js', 'bar/*.js'], 'baz/*.js']
+	            dest: 'build/<%= baz %>.js'
+	        }
+	    },
+	    //用于任务配置模板的任意属性
+	    foo: 'c',
+	    bar: 'b<%= foo %>d', //'bcd'
+	    baz: 'a<%= bar %>e', //'abcde'
+	    qux: ['foo/*.js', 'bar/*.js']
+	});
+
+--导入外部数据
+	--在下面的Gruntfile中，项目的元数据是从package.json文件中导入到Grunt配置中的，
+	  并且grunt-contrib-uglify插件的uglify任务被配置用于压缩一个源文件以及使用该元数据动态的生成一个banner注释。
+	
+	Grunt有grunt.file.readJSON和grunt.file.readYAML两个方法分别用于引入JSON和YAML数据。
+	
+		grunt.initConfig({
+		    pkg: grunt.file.readJSON('package.json'),
+		    uglify: {
+		        options: {
+		            banner: '/* <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+		        },
+		        dist: {
+		            src: 'src/<%= pkg.name %>.js',
+		            dest: 'dist/<%= pkg.name %>.min.js'
+		        }
+		    }
+		});
+--------------------------------------------------------
+    --创建插件
+        1.通过 npm install -g grunt-init 命令安装 grunt-init 。
+        2.通过 git clone git://github.com/gruntjs/grunt-init-gruntplugin.git ~/.grunt-init/gruntplugin 命令安装grunt插件模版。
+        3.在一个空的目录中执行 grunt-init gruntplugin 。
+        4.执行 npm install 命令以准备开发环境。
+        5.为你的插件书写代码。
+        6.执行 npm publish 命令将你创建的 Grunt 插件提发布npm！
+    --注意
+        命名你的task
+        "grunt-contrib" 命名空间保留给 Grunt 团队维护的task使用，请给你自己的task起一个合适名字，并且避免使用被保留的命名空间。
+
+    --调试
+        Grunt默认隐藏了error stack traces，但是可以通过 --stack 参数启用，方便你调试自己的task。
+        如果你希望 Grunt 在出现错误时总是能记录下stack trace，可以在你的shell中创建一个命令别名（alias）。
+        例如，在bash中，可以通过 alias grunt='grunt --stack' 命令创建一个别名。
+
+    --存储任务文件
+        只在项目根目录中的 .grunt/[npm-module-name] 目录中存储数据文件，并在适当的时候将其清除。
+        对于临时文件这并不是一个好的解决方案, 建议使用后面列出的几个常用npm模块（例如 temporary、tmp）来调用操作系统级别的临时目录功能。
+
+    --避免改变当前工作目录：process.cwd()
+        默认情况下，包含gruntfile文件的目录被设置为当前工作目录。用户可以在自己的gruntfile中通过执行grunt.file.setBase() 改变改变当前工作目录，但是插件不应该改变它。
+        path.resolve('foo') 可以被用来获取'foo' 相对于 Gruntfile 所在目录的绝对路径。
+
+--------------------------------------------------------
+    CLI 参数 / 环境
+        -通过 process.env 来访问环境变量。
+        为什么我的异步task没有完成？
+        如果发生这种情况，可能是由于你忘记调用 this.async 方法来告诉Grunt你的任务是异步的。
+        为了简单起见，Grunt使用同步的编码风格，可以在task体中通过调用 this.async() 将其转换为异步的。
+        注意，传递 false 给 done() 函数就会告诉Grunt你的任务已经失败。
+        例如：
+        grunt.registerTask('asyncme', 'My asynchronous task.', function() {
+          var done = this.async();
+          doSomethingAsync(done);
+        });

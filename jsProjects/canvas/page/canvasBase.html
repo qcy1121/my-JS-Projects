@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>canvas base</title>
+        <link type="text/css"  href='../../css/base.css' rel="stylesheet" />
+        <script type="text/javascript" src="../../lib/require.js" ></script>
+        <style>
+
+            .showDiv{
+                /*max-width:1000px;
+                margin:0 auto;
+                background-color:#B0C953;
+                    */
+            }
+            .showDiv > div{
+                display:inline-block;
+                width: 300px;
+                height:300px;
+                margin:2px 10px;
+                border:red solid 1px; 
+            }
+        </style>
+    </head>
+    <body>
+
+    <div class='body'>
+    <div id='showDiv' class='showDiv'>
+        
+    </div>
+    </div>
+    <script>
+        require.config({
+            baseUrl: "../../lib",
+            paths: {
+                "jquery": "jquery",
+                "app":"../canvas/js"
+            }
+        });
+        require(['app/canvasBase'],function(app){
+            app.run();
+        });
+    </script>
+    </body>
+</html>

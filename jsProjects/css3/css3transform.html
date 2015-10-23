@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>css3 transform test</title>
+        <!--<script type = "text/javascript" src = "../sit/js/vendor/jquery.min.1.11.1.js"></script>-->
+        <link type="text/css"  href='../css/base.css' rel="stylesheet" />
+        <style>
+           
+            .showDiv{
+                width:200px;
+                height:200px;
+                background:red;
+                border-radius:5px;
+                position:absolute;
+                top:0px;left:0px;bottom:0px;right:0px;
+                
+                margin:auto;
+            }
+            .outer{
+               position:relative;
+               overflow:hidden;
+               /*
+               margin:200px 0;*/
+               width:100%;height:400px;
+            }
+            .outer:before{
+               content:"the transform value:";
+               position:absolute;
+               top:0px;
+               left:4px;
+            }
+            .value{
+                position:absolute;
+                top:0px;
+                left:130px;
+                color:red;
+                height:20px;width:100%;
+            }
+            div#btns > div
+            {
+                margin:5px;
+                padding-top:20px;
+                border:solid 1px;
+                position:relative;
+            }
+            #btns{
+                 counter-reset:sectioncounter;/*计数器*/
+            }
+            div#btns > div::after{
+                content: counter(sectioncounter) ': ('attr(data-name)')(number add by counter)';
+                counter-increment:sectioncounter;/**/
+                position:absolute;
+                top:0px;
+                left:2px;
+            }
+            /*#btns>div:nth-child(1)::after
+            {
+                content: 'transform 2d';
+            }
+            #btns>div:nth-child(2)::after
+            {
+                content: 'transform 3d';
+            }*/
+        </style>
+    </head>
+    <body>
+    <div class="body">
+    
+    <h1> css3 transform</h1>
+    <p>please update the slider range</p>
+    <div id='btns' >
+
+    </div>
+    <div class='outer' >
+    <div id='value' class='value'></div>
+    <div id='showDiv' class='showDiv'>
+    <h2>Up</h2>
+    </div>
+    </div>
+    </div>
+        <script type="text/javascript" src="../lib/jquery.js"></script>
+        <script type="text/javascript" src="css3transform.js"></script>
+    </body>
+</html>

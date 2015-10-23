@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html manifest="llk.appcache">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <title>连连看 javaScript 版</title>
+    <meta name="description" content="">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta http-equiv="cleartype" content="on">
+
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="img/touch/apple-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#222222">
+
+
+    <!-- For iOS web apps. Delete if not needed. https://github.com/h5bp/mobile-boilerplate/issues/94 -->
+    <!--
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="">
+    -->
+
+    <!-- This script prevents links from opening in Mobile Safari. https://gist.github.com/1042026 -->
+    <!--
+    <script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
+    -->
+
+    <link rel="stylesheet" href="../css/normalize.css">
+    <script src="../lib/modernizr-2.7.0.min.js"></script>
+<script src="../lib/require.js" data-main="../js/main"></script>
+<link rel="stylesheet" href="../css/llk.css"/>
+<link rel ="stylesheet" href="../lib/jquery-ui.css"/>
+</head>
+<body>
+
+<div id="outDiv" class="outDiv" >
+
+        <div  class="barTable">
+            <div class="timeBarContent timeBarLeft"><span class="timeLeft">总时间 :<label  id="timeleft" ></label></span><progress  id="timeBar" class="progressBar" ></progress></div>
+            <div class="timeBarContent timeBarRight"><span class="timeLeft" >连击 :<label  id="links" > </label></span><progress  id="awardBar" class=" progressBar"></progress></div>
+        </div>
+    <div class='content' >
+        <div id="myButtonDiv" class="myButtonDiv">
+            <a href='javascript:void(0)'class='aButton my-icon' id="draw" title="图片"></a>
+            <a href='javascript:void(0)'class='aButton my-icon' id="drawWords" title="文字"></a>
+            <a href='javascript:void(0)'class='aButton my-icon' id="lock" title="暂停"></a>
+            <a href='javascript:void(0)'class='aButton my-icon' id="refresh" title="刷新"></a>
+            <a href='javascript:void(0)'class='aButton my-icon' id="hint" title="提示" ></a>
+        </div>
+
+        <!--<div class="co-main">-->
+        <div id="tableDiv" class="tableDiv" ></div>
+    </div>
+
+</div>
+<div id="setting" class="hidden">
+
+</div>
+<div id="mobile" class=" hidden" >
+
+</div>
+</body>
+</html>

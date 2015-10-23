@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>css vertical centre</title>
+        <style>
+html, body	{height:100%; margin:0; padding:0;}
+
+html		{font-size:0.75em;}
+
+.myContent  { width:100%;height:100%;}
+footer {height:20px;position:fixed;bottom:0px;}
+
+.column		{float:left; width:19.5%; background-color:#B0C953; height:100%; border-right:2px dashed #fff; position:relative;}
+
+.content	{background-color:#fff; padding:20px; margin:10px; display:block;}
+
+.label		{position:absolute; padding:10px; background-color:#fff; opacity:0.4; margin:5px;}
+.label:hover	{opacity:0.7;}
+.label p	{margin:0.2em; padding:0;}
+
+.good		{color:#009900;}
+.bad		{color:#FF3300;}
+
+#wrapper1	{display:table;  height:85%; padding:3.7em 10px 10px 10px;}
+#middle1	{display:table-cell; vertical-align:middle; background-color:#DDF879;}
+
+#content2	{position:absolute; top:50%; margin-top:-120px; height:240px;}
+
+#floater3	{float:left; height:50%; margin-bottom:-120px; width:100%; background-color:#DDF879;}
+#content3	{clear:both; height:240px; /*z-index:32;*/ position:relative;}
+
+#content4	{position:absolute; top:0; bottom:0; left:0; right:0; margin:auto; height:240px; width:70%;}
+
+#content5	{line-height:10em; height:10em;}
+
+
+code		{background-color:#ddd; padding:3px; line-height:1.7em;}
+ul			{margin:0; padding:0; padding-left:1em;}
+
+</style>
+
+</head>
+
+<body>
+<div class='myContent'>
+	
+	<div class="column">
+		
+		<div class="label" style="top:10px; left:20px;">
+			<code>display:table;</code>
+		</div>
+		
+		<div class="label" style="top:70px; left:20px;">
+			<code>
+				display:table-cell;<br />
+				vertical-align:middle;
+			</code>
+		</div>
+		
+		<div id="wrapper1">			
+			<div id="middle1">
+				<div class="content">
+					<ul>
+						<li class="good">Everything in this table cell div is centred</li>
+						<li class="good">It can dynamically change to any height based on content (try by changing your browser font size)</li>
+						<li class="good">Doesn&rsquo;t get cut off when there isn't enough room</li>
+						<li class="bad">Doesn&rsquo;t work in Internet Explorer(8-)</li>
+						<li class="bad">Uses 2 extra <code>div</code>s</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	
+	
+	<div class="column">
+		
+		<div class="label">
+			Any object, with relative positioning
+		</div>
+		
+		<div class="content" id="content2">
+			<p><code>position:absolute; top:50%; height:240px; margin-top:(negative half the height);</code></p>
+			<ul>
+				<li class="good">Works in all browsers</li>
+				<li>Fixed height object (can be ems)</li>
+                <li class='bad'>对象必须在 CSS 中指定固定的高度</li>
+				<li class="bad">Gets cut off when there isn't enough space</li>
+				<li class="good">Doesn't require additional objects</li>
+			</ul>
+		</div>
+		
+	</div>
+	
+	
+	<div class="column">
+		
+		<div class="label">
+			<code>
+			float:left;<br />
+			height:50%;<br />
+			margin-bottom:-120px;
+			</code>
+		</div>
+		
+		<div id="floater3"></div>
+		
+		<div id="content3" class="content">
+			<p><code>position:relative; clear:left; height:240px;</code></p>
+			<ul>
+				<li class="good">Works in all browsers</li>
+				<li>Fixed Height (can be ems)</li>
+				<li class="good">Doesn't get cut off when there isn't enough space</li>
+				<li class="bad">Uses 1 extra empty <code>div</code> (not too bad)</li>
+			</ul>
+		</div>
+		
+	</div>
+	
+	<div class="column">
+		
+		<div class="label">
+			Any object, with relative positioning
+		</div>
+		
+		<div id="content4" class="content">
+			<p><code>top:0; bottom:0; left:0; right:0; <br />position:absolute; margin:auto; <br />height:something; width:something;</code><br />
+            因为它有固定高度，其实并不能和上下都间距为 0，因此 margin:auto; 会使它居中
+			</p>
+			<ul>
+				<li>Must have a fixed width and height</li>
+				<li class="bad">This doesn't work in Internet Explorer (8-)</li>
+				<li class="bad">Gets cut off when there isn't enough space</li>
+			</ul>
+		</div>
+		
+	</div>
+	
+	<div class="column">
+		<div class="content" id="content5">
+			Single Line
+		</div>
+		
+		<div class="label">
+			
+			<p><code>line-height:10em; height:10em;</code></p>
+			
+			<ul>
+				<li>Only used to centre a single line of text</li>
+				<li>Container must have fixed height (can be em, can't be %)</li>
+				<li>(very useful for making buttons)</li>
+				<li class="good">Works in all browsers</li>
+				<li class="good">Doesn't get cut off when the isn't enough space</li>
+				<li class="bad">When there is more than a single line, it breaks badly</li>
+			</ul>
+		</div>
+	</div>
+
+
+
+</div>
+    <footer>lean from <a href='http://douglasheriot.com/tutorials/css_vertical_centre/demo4.html' >http://douglasheriot.com/</a> and 
+        <a href='http://www.qianduan.net/css-to-achieve-the-vertical-center-of-the-five-kinds-of-methods.html' >http://www.qianduan.net</a>
+
+    </footer>
+    </body>
+</html>
