@@ -44,5 +44,6 @@ define(['exports', 'web/webApiBase','util/util'], function (exports, web,u) {
     })(WebApi);
 
     exports.SessionApi = SessionApi;
+    //console.log('test')
 });
     
