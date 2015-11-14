@@ -3,26 +3,27 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>chart2d</title>
-<link href="../../lib/dtkSDK/dijit/themes/claro/claro.css" rel="stylesheet" />
+<link href="//ajax.googleapis.com/ajax/libs/dojo/1.8.0/dijit/themes/claro/claro.css" rel="stylesheet" />
 <script>
 dojoConfig = {
     //locale:'zh',
     async: true,
-    baseUrl: './',
+    baseUrl: '//ajax.googleapis.com/ajax/libs/dojo/1.8.0/',
     gfxRenderer: "svg", // svg gets priority
     parseOnLoad: true,
     packages: [
-        { name: "dojo", location: '../../lib/dtkSDK/dojo' },
-        { name: "dijit", location: '../../lib/dtkSDK/dijit' },
-        { name: "dojox", location: '../../lib/dtkSDK/dojox' },
-        { name: "put-selector", location: '../../lib/dtkSDK/put-selector' },
-        { name: "xstyle", location: '../../lib/dtkSDK/xstyle' },
-        { name: "app", location: "./app" }
+        { name: "dojo", location: './dojo' },
+        { name: "dijit", location: './dijit' },
+        { name: "dojox", location: './dojox' },
+        { name: "put-selector", location: './put-selector' },
+        { name: "xstyle", location: './xstyle' },
+        { name: "app", location: location.pathname.replace('/index.html','')+"/app" }
     ]
 };
 </script>
 
-<script src='//cdn.bootcss.com/dojo/1.10.0/dojo.js'></script>
+<!--<script src='//cdn.bootcss.com/dojo/1.10.0/dojo.js'></script>-->
+    <script src="//ajax.googleapis.com/ajax/libs/dojo/1.8.0/dojo/dojo.js"></script>
 </head>
 <body class='claro' >
 <div id='buttonDiv'>
